@@ -36,7 +36,7 @@ Configure TypeScript strict mode. Add `npm run typecheck` script. Set up jest wi
 
 ---
 
-### [ ] T02 — Theme tokens
+### [x] T02 — Theme tokens
 
 Create `src/theme/colors.ts`, `typography.ts`, `spacing.ts`, `motion.ts`. Mirror `DESIGN.md` §1, §3, §5, §7 exactly. Export typed objects, no magic strings.
 

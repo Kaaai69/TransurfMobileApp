@@ -10,10 +10,11 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "format": "prettier --check app package.json tsconfig.json eslint.config.js .prettierrc",
-    "format:write": "prettier --write app package.json tsconfig.json eslint.config.js .prettierrc"
+    "format": "prettier --check app src package.json tsconfig.json eslint.config.js .prettierrc",
+    "format:write": "prettier --write app src package.json tsconfig.json eslint.config.js .prettierrc"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
