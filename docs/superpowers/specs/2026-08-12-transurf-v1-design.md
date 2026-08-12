@@ -6,7 +6,7 @@
 
 **Platform:** Android-first, Expo SDK 54, React Native, TypeScript
 
-**Implementation order:** Strictly follow `files (1)/BUILD.md`, one task and one focused commit at a time.
+**Implementation order:** Strictly follow `BUILD.md`, one task and one focused commit at a time.
 
 ## 1. Product intent
 
@@ -23,9 +23,9 @@ The visual thesis is:
 When project materials conflict, use this priority:
 
 1. Decisions explicitly approved in the 2026-08-12 design session.
-2. `files (1)/CLAUDE.md` and `files (1)/BUILD.md` for the Expo implementation.
-3. `files/DESIGN.md`, `files/identity-and-motion.md`, `files/color-system.md`, `files/roadmap.md`, and the other product reference documents.
-4. The older Kotlin-specific instructions in `files/CLAUDE.md`; their product principles remain useful, but their native Android architecture does not apply.
+2. `CLAUDE.md` and `BUILD.md` for the Expo implementation.
+3. `DESIGN.md`, `docs/identity-and-motion.md`, `docs/color-system.md`, `docs/roadmap.md`, and the other product reference documents.
+4. The older Kotlin-specific instructions in `docs/archive/legacy-kotlin-project-context.md`; their product principles remain useful, but their native Android architecture does not apply.
 
 Resolved conflicts:
 
@@ -65,7 +65,7 @@ Excluded features must not appear as disabled tabs, empty cards, teaser copy, or
 
 ## 4. Launch experience
 
-The source asset is `Light_arc_expanding_in_void_202608031404.mp4`. It must not be replaced by the two-second alternatives in `files/`.
+The source asset is `Light_arc_expanding_in_void_202608031404.mp4`. It must not be replaced by the two-second alternatives.
 
 ### First launch
 
@@ -114,7 +114,7 @@ All production glow is drawn by the shared `Glow` component. The supplied images
 
 ### Color
 
-The background is always `#000000`. Surface and content colors follow `files/DESIGN.md` exactly:
+The background is always `#000000`. Surface and content colors follow `DESIGN.md` exactly:
 
 - `surface1 #0E0F14`
 - `surface2 #161822`

@@ -1,3 +1,5 @@
+> **Archive warning:** This document is non-authoritative and retained only for historical product context.
+
 # CLAUDE.md
 
 Project context. Read before any task in this repo.

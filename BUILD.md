@@ -28,7 +28,7 @@ Ordered task list. This is the work plan for the agent.
 
 Goal: the design system exists as code, before any screen is built.
 
-### [ ] T01 — Project hygiene
+### [x] T01 — Project hygiene
 
 Configure TypeScript strict mode. Add `npm run typecheck` script. Set up jest with `jest-expo`. Add `.prettierrc` and ESLint. Create `docs/` and move all reference `.md` files there except `CLAUDE.md`, `DESIGN.md`, `BUILD.md`.
 
@@ -120,7 +120,7 @@ Tasks without a research source get `sourceDoi: null` — this is valid, do not 
 
 ### [ ] T09 — Scoring ⭐
 
-`src/domain/scoring.ts`. Implements `docs/onboarding-brief.md` part 4: 18 answers → six category values 0–100, plus weakest link selection with the fixed tie-break order.
+`src/domain/scoring.ts`. Implements `docs/onboarding-brief.md` part 4: 16 answers → six category values 0–100, plus weakest link selection with the fixed tie-break order.
 
 **Acceptance:** unit tests covering — all-best answers, all-worst answers, the caffeine/bedtime modifier, tie-break order. Values always clamp to 0–100.
 
@@ -166,9 +166,9 @@ XP per `docs/task-library.md` §2. **XP never decreases.**
 
 ### [ ] T13 — Splash screen
 
-`app/index.tsx`. Plays `assets/splash_2s_square.mp4` via `expo-video`, composited with `mixBlendMode` screen-equivalent over black (the video's background is true `#000000`).
+`app/index.tsx`. On first launch, plays the complete `Light_arc_expanding_in_void_202608031404.mp4` via `expo-video`, composited with `mixBlendMode` screen-equivalent over black (the video's background is true `#000000`).
 
-Falls through to onboarding or daily screen depending on stored state. **If data is ready before the video ends, cut it short** — never make a ready app wait.
+Falls through to onboarding or daily screen depending on stored state. Repeat launches use a derived final 600 ms clip of the same source video.
 
 **Acceptance:** cold start shows the animation, then routes correctly. Second launch on the same day is shortened.
 
@@ -198,9 +198,9 @@ Screen 8 is the first warm light in the entire product.
 
 ### [ ] T16 — Questions (11–17)
 
-18 questions per `docs/onboarding-brief.md` part 4. Sliders and single-select. Conditional display for Q6 (only if Q5 ≠ "нет").
+16 questions per `docs/onboarding-brief.md` part 4. Sliders and single-select. Conditional display for Q6 (only if Q5 ≠ "нет").
 
-Progress bar shows honest `current / 18`, strictly linear.
+Progress bar shows honest `current / 16`, strictly linear.
 
 **Acceptance:** all answers persist, back navigation preserves them, Q6 hides correctly.
 

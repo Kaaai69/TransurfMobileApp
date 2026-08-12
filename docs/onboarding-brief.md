@@ -1,3 +1,5 @@
+> **Implementation note:** This preserved content draft contains 18 source questions. The approved build uses 16; the approved design specification and root `BUILD.md` take precedence.
+
 # Онбординг и доказательная база
 
 Рабочий бриф для дизайнера, копирайтера и разработчика.
