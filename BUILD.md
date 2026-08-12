@@ -46,7 +46,7 @@ Load Inter via `@expo-google-fonts/inter`, weights 400 and 500 only.
 
 ---
 
-### [ ] T03 — Russian strings file
+### [x] T03 — Russian strings file
 
 Create `src/i18n/ru.ts` with a typed nested object. Seed with strings already written in `docs/onboarding-brief.md` (screens 1–22) and `docs/day1-14-and-goals.md` (day 3, 7, 11, 14 texts).
 
