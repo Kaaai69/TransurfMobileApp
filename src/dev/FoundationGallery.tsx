@@ -1,7 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
-import { AnswerOption, Chip, ProgressLine, ScreenShell } from '../components';
+import {
+  AnswerOption,
+  Chip,
+  ProgressLine,
+  Ring,
+  ScreenShell,
+  type HabitDayStatus,
+  type StateRingValues,
+} from '../components';
 import { ru } from '../i18n/ru';
 import { Glow, type GlowForm, type GlowLevel } from '../light';
 import { colors, spacing, typography } from '../theme';
@@ -12,8 +20,27 @@ const formRows: readonly (readonly GlowForm[])[] = [
   ['edge', 'core'],
 ];
 
+const stateRingFixture = {
+  sleep: 72,
+  energy: 58,
+  movement: 81,
+  food: 64,
+  water: 46,
+  mind: 69,
+} as const satisfies StateRingValues;
+
+const habitRingFixture = Array.from({ length: 60 }, (_, index): HabitDayStatus => {
+  if (index === 18) {
+    return 'forgiven';
+  }
+
+  return index < 36 ? 'done' : 'pending';
+});
+
 export function FoundationGallery() {
   const [selectedPreview, setSelectedPreview] = useState(true);
+  const { width } = useWindowDimensions();
+  const responsiveRingSize = width - spacing.screen * 2;
 
   return (
     <ScreenShell level="L0">
@@ -68,6 +95,14 @@ export function FoundationGallery() {
             <Chip label={ru.foundation.selected} tone="accent" />
             <Chip label={ru.common.later} tone="warm" />
           </View>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>{ru.foundation.rings}</Text>
+        <View style={styles.ringList}>
+          <Ring mode="state" size={responsiveRingSize} values={stateRingFixture} />
+          <Ring days={habitRingFixture} mode="habit" size={responsiveRingSize} />
         </View>
       </View>
     </ScreenShell>
@@ -126,5 +161,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.rhythm,
+  },
+  ringList: {
+    alignItems: 'center',
+    gap: spacing.sectionGap,
   },
 });

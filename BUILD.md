@@ -80,7 +80,7 @@ Six presets L0–L5 per `DESIGN.md` §2. Implement with `react-native-svg` `Radi
 
 ---
 
-### [ ] T06 — Ring component ⭐
+### [x] T06 — Ring component ⭐
 
 `src/components/Ring.tsx` with `react-native-svg`.
 
