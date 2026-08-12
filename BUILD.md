@@ -335,7 +335,7 @@ Outside v1 scope per `docs/roadmap.md` §4. If a task seems to need these, **sto
 
 Not agent tasks — decisions blocking later work.
 
-- [ ] App name — blocks icon, store listing, `app.json`
+- [x] App name — resolved as Transurf
 - [ ] Price — blocks paywall copy
 - [ ] `content-tasks.xlsx` filled from 17 rows to full set — blocks T08 completion beyond core tasks
 - [ ] RuStore developer account — blocks T27
