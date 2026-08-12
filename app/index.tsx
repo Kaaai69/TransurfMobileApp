@@ -1,5 +1,1 @@
-import { View } from 'react-native';
-
-export default function IndexScreen() {
-  return <View />;
-}
+export { FoundationGallery as default } from '../src/dev/FoundationGallery';

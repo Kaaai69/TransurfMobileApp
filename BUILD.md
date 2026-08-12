@@ -54,7 +54,7 @@ Create `src/i18n/ru.ts` with a typed nested object. Seed with strings already wr
 
 ---
 
-### [ ] T04 — Glow component ⭐
+### [x] T04 — Glow component ⭐
 
 `src/light/Glow.tsx` + `src/light/levels.ts`.
 
