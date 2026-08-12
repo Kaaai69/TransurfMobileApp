@@ -1,4 +1,4 @@
-import { glowForms, glowLevels, resolveGlowGeometry, resolveGlowPalette } from './levels';
+import { glowLevels, resolveGlowPalette, resolveGlowRenderPlan } from './levels';
 
 describe('light scale', () => {
   test('L0 produces no visible palette', () => {
@@ -19,40 +19,70 @@ describe('light scale', () => {
     });
   });
 
-  test('bloom anchors its gradient at the bottom geometry and preserves its elliptical falloff', () => {
-    const bloom = resolveGlowGeometry('L4', 'bloom');
+  test('bloom anchors its pixel gradient at the bottom of the measured layout', () => {
+    const bloom = resolveGlowRenderPlan('L4', 'bloom', { width: 320, height: 640 });
 
     expect(bloom.gradient).toMatchObject({
-      cx: glowForms.bloom.cx,
-      cy: glowForms.bloom.cy,
-      r: glowForms.bloom.rx + glowLevels.L4.blur,
+      cx: bloom.viewport.padding + 160,
+      cy: bloom.viewport.padding + 640,
     });
     expect(bloom.gradient.transform).toContain(
-      `translate(${glowForms.bloom.cx} ${glowForms.bloom.cy})`,
+      `translate(${bloom.gradient.cx} ${bloom.gradient.cy})`,
     );
   });
 
-  test('each visible level supplies its blur to the rendered falloff geometry', () => {
+  test('each visible level has a distinct Android-effective pixel falloff extent', () => {
     const visible = ['L1', 'L2', 'L3', 'L4', 'L5'] as const;
+    const plans = visible.map((level) =>
+      resolveGlowRenderPlan(level, 'halo', { width: 240, height: 120 }),
+    );
 
-    expect(visible.map((level) => resolveGlowGeometry(level, 'halo').filter.stdDeviation)).toEqual(
+    expect(plans.map((plan) => plan.falloff.extent)).toEqual(
       visible.map((level) => glowLevels[level].blur),
     );
-    expect(resolveGlowGeometry('L1', 'halo').gradient.r).toBeGreaterThan(
-      resolveGlowGeometry('L5', 'halo').gradient.r,
-    );
+    const falloffRadii = plans.map((plan) => {
+      if (plan.falloff.geometry.shape !== 'circle') {
+        throw new Error('Halo falloff must remain circular.');
+      }
+
+      return plan.falloff.geometry.r;
+    });
+
+    expect(new Set(falloffRadii).size).toBe(visible.length);
   });
 
-  test('edge keeps its outline visible and reserves unclipped outer falloff bounds', () => {
-    const edge = resolveGlowGeometry('L4', 'edge');
-    const edgeCornerDistance = Math.hypot(glowForms.edge.width / 2, glowForms.edge.height / 2);
+  test('edge renders inside a padded pixel viewport with room for its exterior falloff', () => {
+    const edge = resolveGlowRenderPlan('L4', 'edge', { width: 200, height: 100 });
 
-    expect(edge.gradient.r).toBeGreaterThan(edgeCornerDistance);
-    expect(edge.filter).toMatchObject({
-      x: glowForms.edge.x - glowLevels.L4.blur,
-      y: glowForms.edge.y - glowLevels.L4.blur,
-      width: glowForms.edge.width + glowLevels.L4.blur * 2,
-      height: glowForms.edge.height + glowLevels.L4.blur * 2,
+    expect(edge.viewport).toMatchObject({
+      padding: glowLevels.L4.blur,
+      x: -glowLevels.L4.blur,
+      y: -glowLevels.L4.blur,
+      width: 200 + glowLevels.L4.blur * 2,
+      height: 100 + glowLevels.L4.blur * 2,
     });
+    expect(edge.geometry).toMatchObject({ x: glowLevels.L4.blur, y: glowLevels.L4.blur });
+    expect(edge.falloff.geometry).toMatchObject({
+      x: glowLevels.L4.blur / 2,
+      y: glowLevels.L4.blur / 2,
+      strokeWidth: glowLevels.L4.blur,
+    });
+  });
+
+  test('a halo remains circular when the measured layout aspect ratio changes', () => {
+    const wide = resolveGlowRenderPlan('L4', 'halo', { width: 240, height: 120 });
+    const tall = resolveGlowRenderPlan('L4', 'halo', { width: 120, height: 240 });
+
+    if (
+      wide.geometry.shape !== 'circle' ||
+      tall.geometry.shape !== 'circle' ||
+      wide.falloff.geometry.shape !== 'circle' ||
+      tall.falloff.geometry.shape !== 'circle'
+    ) {
+      throw new Error('Halo geometry must remain circular.');
+    }
+
+    expect(wide.geometry.r).toBe(tall.geometry.r);
+    expect(wide.falloff.geometry.r).toBe(tall.falloff.geometry.r);
   });
 });

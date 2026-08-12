@@ -52,81 +52,145 @@ export const glowForms = {
   core: { shape: 'circle', cx: 50, cy: 50, r: 32 },
 } as const satisfies Record<GlowForm, GlowGeometry>;
 
-export type ResolvedGlowGeometry = Readonly<{
-  geometry: GlowGeometry;
+export type GlowLayout = Readonly<{
+  width: number;
+  height: number;
+}>;
+
+type PixelGlowGeometry =
+  | Readonly<{ shape: 'ellipse'; cx: number; cy: number; rx: number; ry: number }>
+  | Readonly<{ shape: 'circle'; cx: number; cy: number; r: number }>
+  | Readonly<{
+      shape: 'rect';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      rx: number;
+      strokeWidth?: number;
+    }>;
+
+export type GlowRenderPlan = Readonly<{
+  viewport: Readonly<{
+    padding: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    viewBox: string;
+  }>;
+  geometry: PixelGlowGeometry;
   gradient: Readonly<{
     cx: number;
     cy: number;
     r: number;
     transform?: string;
   }>;
-  filter: Readonly<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    stdDeviation: number;
+  falloff: Readonly<{
+    extent: number;
+    geometry: PixelGlowGeometry;
   }>;
 }>;
 
-export function resolveGlowGeometry(level: GlowLevel, form: GlowForm): ResolvedGlowGeometry {
-  const geometry = glowForms[form];
+export function resolveGlowRenderPlan(
+  level: GlowLevel,
+  form: GlowForm,
+  layout: GlowLayout,
+): GlowRenderPlan {
+  const formGeometry = glowForms[form];
   const blur = glowLevels[level].blur;
+  const scaleX = layout.width / glowViewBox.width;
+  const scaleY = layout.height / glowViewBox.height;
+  const minScale = Math.min(scaleX, scaleY);
+  const baseGeometry =
+    formGeometry.shape === 'ellipse'
+      ? {
+          shape: 'ellipse' as const,
+          cx: layout.width / 2,
+          cy: layout.height,
+          rx: formGeometry.rx * scaleX,
+          ry: formGeometry.ry * scaleY,
+        }
+      : formGeometry.shape === 'circle'
+        ? {
+            shape: 'circle' as const,
+            cx: layout.width / 2,
+            cy: layout.height / 2,
+            r: formGeometry.r * minScale,
+          }
+        : {
+            shape: 'rect' as const,
+            x: 0,
+            y: 0,
+            width: layout.width,
+            height: layout.height,
+            rx: formGeometry.rx * minScale,
+          };
+  const bloomOverflow =
+    baseGeometry.shape === 'ellipse' ? Math.max(baseGeometry.rx - layout.width / 2, 0) : 0;
+  const padding = Math.max(blur, bloomOverflow + blur);
+  const viewport = {
+    padding,
+    x: -padding,
+    y: -padding,
+    width: layout.width + padding * 2,
+    height: layout.height + padding * 2,
+    viewBox: `0 0 ${layout.width + padding * 2} ${layout.height + padding * 2}`,
+  };
+  const geometry =
+    baseGeometry.shape === 'ellipse'
+      ? { ...baseGeometry, cx: baseGeometry.cx + padding, cy: baseGeometry.cy + padding }
+      : baseGeometry.shape === 'circle'
+        ? { ...baseGeometry, cx: baseGeometry.cx + padding, cy: baseGeometry.cy + padding }
+        : { ...baseGeometry, x: padding, y: padding };
 
   if (geometry.shape === 'ellipse') {
-    const radiusX = geometry.rx + blur;
-    const radiusY = geometry.ry + blur;
+    const falloffGeometry = { ...geometry, rx: geometry.rx + blur, ry: geometry.ry + blur };
 
     return {
+      viewport,
       geometry,
       gradient: {
         cx: geometry.cx,
         cy: geometry.cy,
-        r: radiusX,
-        transform: `translate(${geometry.cx} ${geometry.cy}) scale(1 ${radiusY / radiusX}) translate(${-geometry.cx} ${-geometry.cy})`,
+        r: falloffGeometry.rx,
+        transform: `translate(${geometry.cx} ${geometry.cy}) scale(1 ${falloffGeometry.ry / falloffGeometry.rx}) translate(${-geometry.cx} ${-geometry.cy})`,
       },
-      filter: {
-        x: geometry.cx - radiusX,
-        y: geometry.cy - radiusY,
-        width: radiusX * 2,
-        height: radiusY * 2,
-        stdDeviation: blur,
-      },
+      falloff: { extent: blur, geometry: falloffGeometry },
     };
   }
 
   if (geometry.shape === 'circle') {
-    const radius = geometry.r + blur;
+    const falloffGeometry = { ...geometry, r: geometry.r + blur };
 
     return {
+      viewport,
       geometry,
-      gradient: { cx: geometry.cx, cy: geometry.cy, r: radius },
-      filter: {
-        x: geometry.cx - radius,
-        y: geometry.cy - radius,
-        width: radius * 2,
-        height: radius * 2,
-        stdDeviation: blur,
-      },
+      gradient: { cx: geometry.cx, cy: geometry.cy, r: falloffGeometry.r },
+      falloff: { extent: blur, geometry: falloffGeometry },
     };
   }
 
+  const falloffGeometry = {
+    ...geometry,
+    x: geometry.x - blur / 2,
+    y: geometry.y - blur / 2,
+    width: geometry.width + blur,
+    height: geometry.height + blur,
+    rx: geometry.rx + blur / 2,
+    strokeWidth: blur,
+  };
   const radius = Math.hypot(geometry.width / 2, geometry.height / 2) + blur;
 
   return {
+    viewport,
     geometry,
     gradient: {
       cx: geometry.x + geometry.width / 2,
       cy: geometry.y + geometry.height / 2,
       r: radius,
     },
-    filter: {
-      x: geometry.x - blur,
-      y: geometry.y - blur,
-      width: geometry.width + blur * 2,
-      height: geometry.height + blur * 2,
-      stdDeviation: blur,
-    },
+    falloff: { extent: blur, geometry: falloffGeometry },
   };
 }
 
