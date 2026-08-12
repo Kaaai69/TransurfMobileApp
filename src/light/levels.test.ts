@@ -1,4 +1,4 @@
-import { glowLevels, resolveGlowPalette } from './levels';
+import { glowForms, glowLevels, resolveGlowGeometry, resolveGlowPalette } from './levels';
 
 describe('light scale', () => {
   test('L0 produces no visible palette', () => {
@@ -16,6 +16,43 @@ describe('light scale', () => {
       core: '#F0F2FF',
       halo: '#8B7BFF',
       alpha: 0.4,
+    });
+  });
+
+  test('bloom anchors its gradient at the bottom geometry and preserves its elliptical falloff', () => {
+    const bloom = resolveGlowGeometry('L4', 'bloom');
+
+    expect(bloom.gradient).toMatchObject({
+      cx: glowForms.bloom.cx,
+      cy: glowForms.bloom.cy,
+      r: glowForms.bloom.rx + glowLevels.L4.blur,
+    });
+    expect(bloom.gradient.transform).toContain(
+      `translate(${glowForms.bloom.cx} ${glowForms.bloom.cy})`,
+    );
+  });
+
+  test('each visible level supplies its blur to the rendered falloff geometry', () => {
+    const visible = ['L1', 'L2', 'L3', 'L4', 'L5'] as const;
+
+    expect(visible.map((level) => resolveGlowGeometry(level, 'halo').filter.stdDeviation)).toEqual(
+      visible.map((level) => glowLevels[level].blur),
+    );
+    expect(resolveGlowGeometry('L1', 'halo').gradient.r).toBeGreaterThan(
+      resolveGlowGeometry('L5', 'halo').gradient.r,
+    );
+  });
+
+  test('edge keeps its outline visible and reserves unclipped outer falloff bounds', () => {
+    const edge = resolveGlowGeometry('L4', 'edge');
+    const edgeCornerDistance = Math.hypot(glowForms.edge.width / 2, glowForms.edge.height / 2);
+
+    expect(edge.gradient.r).toBeGreaterThan(edgeCornerDistance);
+    expect(edge.filter).toMatchObject({
+      x: glowForms.edge.x - glowLevels.L4.blur,
+      y: glowForms.edge.y - glowLevels.L4.blur,
+      width: glowForms.edge.width + glowLevels.L4.blur * 2,
+      height: glowForms.edge.height + glowLevels.L4.blur * 2,
     });
   });
 });

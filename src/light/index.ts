@@ -4,9 +4,12 @@ export {
   glowGradientStops,
   glowLevels,
   glowViewBox,
+  resolveGlowGeometry,
   resolveGlowPalette,
   type GlowForm,
   type GlowLevel,
   type GlowPalette,
+  type ResolvedGlowGeometry,
   type GlowTemperature,
 } from './levels';
+export type { GlowProps } from './Glow';

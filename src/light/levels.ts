@@ -52,6 +52,84 @@ export const glowForms = {
   core: { shape: 'circle', cx: 50, cy: 50, r: 32 },
 } as const satisfies Record<GlowForm, GlowGeometry>;
 
+export type ResolvedGlowGeometry = Readonly<{
+  geometry: GlowGeometry;
+  gradient: Readonly<{
+    cx: number;
+    cy: number;
+    r: number;
+    transform?: string;
+  }>;
+  filter: Readonly<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    stdDeviation: number;
+  }>;
+}>;
+
+export function resolveGlowGeometry(level: GlowLevel, form: GlowForm): ResolvedGlowGeometry {
+  const geometry = glowForms[form];
+  const blur = glowLevels[level].blur;
+
+  if (geometry.shape === 'ellipse') {
+    const radiusX = geometry.rx + blur;
+    const radiusY = geometry.ry + blur;
+
+    return {
+      geometry,
+      gradient: {
+        cx: geometry.cx,
+        cy: geometry.cy,
+        r: radiusX,
+        transform: `translate(${geometry.cx} ${geometry.cy}) scale(1 ${radiusY / radiusX}) translate(${-geometry.cx} ${-geometry.cy})`,
+      },
+      filter: {
+        x: geometry.cx - radiusX,
+        y: geometry.cy - radiusY,
+        width: radiusX * 2,
+        height: radiusY * 2,
+        stdDeviation: blur,
+      },
+    };
+  }
+
+  if (geometry.shape === 'circle') {
+    const radius = geometry.r + blur;
+
+    return {
+      geometry,
+      gradient: { cx: geometry.cx, cy: geometry.cy, r: radius },
+      filter: {
+        x: geometry.cx - radius,
+        y: geometry.cy - radius,
+        width: radius * 2,
+        height: radius * 2,
+        stdDeviation: blur,
+      },
+    };
+  }
+
+  const radius = Math.hypot(geometry.width / 2, geometry.height / 2) + blur;
+
+  return {
+    geometry,
+    gradient: {
+      cx: geometry.x + geometry.width / 2,
+      cy: geometry.y + geometry.height / 2,
+      r: radius,
+    },
+    filter: {
+      x: geometry.x - blur,
+      y: geometry.y - blur,
+      width: geometry.width + blur * 2,
+      height: geometry.height + blur * 2,
+      stdDeviation: blur,
+    },
+  };
+}
+
 export function resolveGlowPalette(
   level: GlowLevel,
   temperature: GlowTemperature,
