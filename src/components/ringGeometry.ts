@@ -5,6 +5,14 @@ export type StateRingValues = Record<RingCategory, number>;
 export type HabitDayStatus = 'done' | 'forgiven' | 'pending';
 
 export type RingPoint = Readonly<{ x: number; y: number }>;
+export type RingTextAnchor = 'start' | 'middle' | 'end';
+
+export type HabitStatusSummary = Readonly<{
+  done: number;
+  forgiven: number;
+  pending: number;
+  total: number;
+}>;
 
 export type StateSector = Readonly<{
   category: RingCategory;
@@ -15,6 +23,7 @@ export type StateSector = Readonly<{
   path: string;
   length: number;
   compactLabelPoint: RingPoint;
+  compactLabelAnchor: RingTextAnchor;
   externalLabelPoint: RingPoint;
 }>;
 
@@ -41,8 +50,8 @@ export const ringGeometry = {
   habitSegmentAngle: 6,
   habitRadius: 105,
   stateStrokeWidth: 7,
-  compactLabelPivotRadius: 70,
   compactLabelClearance: 26,
+  compactLabelMaxRadius: 112,
   externalLabelRadius: 118,
   habitDayCount: 60,
 } as const;
@@ -72,6 +81,10 @@ function arcLength(radius: number, startAngle: number, endAngle: number): number
   return (Math.PI * radius * (endAngle - startAngle)) / 180;
 }
 
+function inwardTextAnchor(angle: number): RingTextAnchor {
+  return Math.cos((angle * Math.PI) / 180) >= 0 ? 'end' : 'start';
+}
+
 export function mapStateValueToRadius(value: number): number {
   const clampedValue = Math.max(0, Math.min(100, value));
 
@@ -95,14 +108,23 @@ export function buildStateSectors(values: StateRingValues): readonly StateSector
       path: arcPath(radius, startAngle, endAngle),
       length: arcLength(radius, startAngle, endAngle),
       compactLabelPoint: pointAt(
-        radius < ringGeometry.compactLabelPivotRadius
-          ? radius + ringGeometry.compactLabelClearance
-          : radius - ringGeometry.compactLabelClearance,
+        Math.min(radius + ringGeometry.compactLabelClearance, ringGeometry.compactLabelMaxRadius),
         middleAngle,
       ),
+      compactLabelAnchor: inwardTextAnchor(middleAngle),
       externalLabelPoint: pointAt(ringGeometry.externalLabelRadius, middleAngle),
     };
   });
+}
+
+export function summarizeHabitStatuses(days: readonly HabitDayStatus[]): HabitStatusSummary {
+  const summary = { done: 0, forgiven: 0, pending: 0 };
+
+  for (const status of days.slice(0, ringGeometry.habitDayCount)) {
+    summary[status] += 1;
+  }
+
+  return { ...summary, total: summary.done + summary.forgiven + summary.pending };
 }
 
 export function buildHabitSegments(days: readonly HabitDayStatus[]): readonly HabitSegment[] {

@@ -1,4 +1,4 @@
-import { colors } from '../theme';
+import { colors, motion } from '../theme';
 
 export type GlowLevel = 'L0' | 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
 export type GlowForm = 'bloom' | 'halo' | 'edge' | 'core';
@@ -16,6 +16,12 @@ export type GlowPalette = Readonly<{
   halo: string;
   alpha: number;
   coreAlpha: number;
+}>;
+
+export type GlowTransitionPlan = Readonly<{
+  opacity: 0 | 1;
+  duration: number;
+  easing: 'ease-in' | 'ease-out';
 }>;
 
 export const glowLevels = {
@@ -214,4 +220,17 @@ export function resolveGlowPalette(
         };
 
   return { ...palette, alpha: preset.alpha, coreAlpha: preset.coreAlpha };
+}
+
+export function resolveGlowTransition(
+  visible: boolean,
+  reducedMotion: boolean,
+): GlowTransitionPlan {
+  const transition = visible ? motion.light.appear : motion.light.recede;
+
+  return {
+    opacity: visible ? 1 : 0,
+    duration: reducedMotion ? 0 : transition.duration,
+    easing: transition.easing,
+  };
 }

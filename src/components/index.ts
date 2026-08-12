@@ -7,7 +7,9 @@ export {
   buildStateSectors,
   mapStateValueToRadius,
   ringCategoryOrder,
+  summarizeHabitStatuses,
   type HabitDayStatus,
+  type HabitStatusSummary,
   type StateRingValues,
 } from './ringGeometry';
 export { ScreenShell, type ScreenShellProps } from './ScreenShell';

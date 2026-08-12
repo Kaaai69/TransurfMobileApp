@@ -3,6 +3,7 @@ import {
   buildStateSectors,
   mapStateValueToRadius,
   ringCategoryOrder,
+  summarizeHabitStatuses,
 } from './ringGeometry';
 
 describe('ring geometry', () => {
@@ -42,7 +43,28 @@ describe('ring geometry', () => {
     expect(forgiven.startAngle - done.endAngle).toBe(0);
   });
 
-  test('keeps compact labels clear of their variable-radius arcs', () => {
+  test('keeps compact labels continuously outside their arcs around the midpoint', () => {
+    const labelRadii = [49.9, 50, 50.1].map((value) => {
+      const [sector] = buildStateSectors({
+        sleep: value,
+        energy: value,
+        movement: value,
+        food: value,
+        water: value,
+        mind: value,
+      });
+
+      return Math.hypot(sector.compactLabelPoint.x - 130, sector.compactLabelPoint.y - 130);
+    });
+
+    expect(labelRadii).toEqual([
+      expect.closeTo(95.93, 4),
+      expect.closeTo(96, 4),
+      expect.closeTo(96.07, 4),
+    ]);
+  });
+
+  test('keeps compact labels outside their arcs and inside a bounded radius', () => {
     const sectors = buildStateSectors({
       sleep: 0,
       energy: 20,
@@ -58,7 +80,17 @@ describe('ring geometry', () => {
         sector.compactLabelPoint.y - 130,
       );
 
-      expect(Math.abs(labelRadius - sector.radius)).toBeGreaterThanOrEqual(24);
+      expect(labelRadius).toBeGreaterThan(sector.radius);
+      expect(labelRadius).toBeLessThanOrEqual(112);
     }
+  });
+
+  test('summarizes forgiven habit days separately from completed days', () => {
+    expect(summarizeHabitStatuses(['done', 'forgiven', 'pending', 'forgiven'])).toEqual({
+      done: 1,
+      forgiven: 2,
+      pending: 1,
+      total: 4,
+    });
   });
 });

@@ -56,4 +56,11 @@ describe('Russian copy contract', () => {
       expect(ru.milestones[day]).not.toHaveProperty('secondaryAction');
     });
   });
+
+  test('describes habit statuses without collapsing forgiven into done', () => {
+    expect(ru.accessibility.habitRingLabel.length).toBeGreaterThan(0);
+    expect(
+      ru.accessibility.habitRingSummary({ done: 14, forgiven: 2, pending: 44 }).match(/\d+/g),
+    ).toEqual(['14', '2', '44']);
+  });
 });

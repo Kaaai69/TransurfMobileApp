@@ -1,5 +1,13 @@
-import { useId, useState } from 'react';
-import { StyleSheet, type LayoutChangeEvent, View } from 'react-native';
+import { useEffect, useId, useState } from 'react';
+import { StyleSheet, type LayoutChangeEvent } from 'react-native';
+import Animated, {
+  Easing,
+  ReduceMotion,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import Svg, { Circle, Defs, Ellipse, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { spacing } from '../theme';
@@ -7,6 +15,7 @@ import {
   glowGradientStops,
   resolveGlowRenderPlan,
   resolveGlowPalette,
+  resolveGlowTransition,
   type GlowLayout,
   type GlowForm,
   type GlowLevel,
@@ -18,12 +27,37 @@ export interface GlowProps {
   form?: GlowForm;
   temperature?: GlowTemperature;
   color?: string;
+  visible?: boolean;
 }
 
-export function Glow({ level, form = 'bloom', temperature = 'cool', color }: GlowProps) {
+export function Glow({
+  level,
+  form = 'bloom',
+  temperature = 'cool',
+  color,
+  visible = true,
+}: GlowProps) {
   const id = useId().replace(/:/g, '');
   const [layout, setLayout] = useState<GlowLayout | null>(null);
+  const reducedMotion = useReducedMotion();
+  const transition = resolveGlowTransition(visible, reducedMotion);
+  const opacity = useSharedValue(reducedMotion ? transition.opacity : 0);
   const palette = resolveGlowPalette(level, temperature, color);
+
+  useEffect(() => {
+    if (transition.duration === 0) {
+      opacity.value = transition.opacity;
+      return;
+    }
+
+    opacity.value = withTiming(transition.opacity, {
+      duration: transition.duration,
+      easing: transition.easing === 'ease-out' ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
+      reduceMotion: ReduceMotion.System,
+    });
+  }, [opacity, transition.duration, transition.easing, transition.opacity]);
+
+  const visibilityStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   if (palette === null) {
     return null;
@@ -40,7 +74,7 @@ export function Glow({ level, form = 'bloom', temperature = 'cool', color }: Glo
   }
 
   return (
-    <View pointerEvents="none" style={styles.fill} onLayout={handleLayout}>
+    <Animated.View style={[styles.fill, visibilityStyle]} onLayout={handleLayout}>
       {plan === null ? null : (
         <Svg
           style={[styles.svg, { left: plan.viewport.x, top: plan.viewport.y }]}
@@ -133,11 +167,11 @@ export function Glow({ level, form = 'bloom', temperature = 'cool', color }: Glo
           ) : null}
         </Svg>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: { ...StyleSheet.absoluteFillObject, overflow: 'visible' },
+  fill: { ...StyleSheet.absoluteFillObject, overflow: 'visible', pointerEvents: 'none' },
   svg: { position: 'absolute' },
 });

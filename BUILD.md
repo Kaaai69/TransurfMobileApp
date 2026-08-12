@@ -54,7 +54,7 @@ Create `src/i18n/ru.ts` with a typed nested object. Seed with strings already wr
 
 ---
 
-### [x] T04 — Glow component ⭐
+### [ ] T04 — Glow component ⭐
 
 `src/light/Glow.tsx` + `src/light/levels.ts`.
 
@@ -63,6 +63,8 @@ Six presets L0–L5 per `DESIGN.md` §2. Implement with `react-native-svg` `Radi
 `bloom` is the most-used form: wide soft glow rising from the bottom edge, 15–25% of screen height.
 
 **Acceptance:** a demo screen renders all six levels side by side, plus all four forms. Verified on a physical device in a dark room — L1 must be barely visible, not a visible blob.
+
+**Manual acceptance pending:** verify L1 brightness and reduced-motion behavior on a physical Android/OLED device in a dark room.
 
 **This is the identity layer. Nothing else in the app draws glow.**
 

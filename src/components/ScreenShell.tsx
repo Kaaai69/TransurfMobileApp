@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,14 +8,18 @@ import { colors, spacing } from '../theme';
 export interface ScreenShellProps extends PropsWithChildren {
   level: GlowLevel;
   glowForm?: GlowForm;
+  footer?: ReactNode;
 }
 
-export function ScreenShell({ children, level, glowForm = 'bloom' }: ScreenShellProps) {
+export function ScreenShell({ children, footer, level, glowForm = 'bloom' }: ScreenShellProps) {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.contentArea}>
         <Glow form={glowForm} level={level} />
-        <ScrollView contentContainerStyle={styles.content}>{children}</ScrollView>
+        <ScrollView contentContainerStyle={styles.content} style={styles.scroll}>
+          {children}
+        </ScrollView>
+        {footer == null ? null : <View style={styles.footer}>{footer}</View>}
       </View>
     </SafeAreaView>
   );
@@ -32,5 +36,12 @@ const styles = StyleSheet.create({
   content: {
     gap: spacing.sectionGap,
     padding: spacing.screen,
+  },
+  footer: {
+    paddingBottom: spacing.screen,
+    paddingHorizontal: spacing.screen,
+  },
+  scroll: {
+    flex: 1,
   },
 });

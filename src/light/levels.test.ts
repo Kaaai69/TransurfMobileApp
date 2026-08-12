@@ -1,4 +1,9 @@
-import { glowLevels, resolveGlowPalette, resolveGlowRenderPlan } from './levels';
+import {
+  glowLevels,
+  resolveGlowPalette,
+  resolveGlowRenderPlan,
+  resolveGlowTransition,
+} from './levels';
 
 describe('light scale', () => {
   test('L0 produces no visible palette', () => {
@@ -84,5 +89,20 @@ describe('light scale', () => {
 
     expect(wide.geometry.r).toBe(tall.geometry.r);
     expect(wide.falloff.geometry.r).toBe(tall.falloff.geometry.r);
+  });
+
+  test('uses the approved light transition durations and skips motion when reduced', () => {
+    expect(resolveGlowTransition(true, false)).toEqual({
+      opacity: 1,
+      duration: 400,
+      easing: 'ease-out',
+    });
+    expect(resolveGlowTransition(false, false)).toEqual({
+      opacity: 0,
+      duration: 250,
+      easing: 'ease-in',
+    });
+    expect(resolveGlowTransition(true, true).duration).toBe(0);
+    expect(resolveGlowTransition(false, true).duration).toBe(0);
   });
 });

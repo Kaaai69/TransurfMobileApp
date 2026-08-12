@@ -30,7 +30,7 @@ export function AnswerOption({ label, selected, onPress, disabled = false }: Ans
         },
       ]}
     >
-      {selected ? <Glow level="L3" form="edge" /> : null}
+      <Glow level="L3" form="edge" visible={selected} />
       <Text style={styles.label}>{label}</Text>
     </Pressable>
   );

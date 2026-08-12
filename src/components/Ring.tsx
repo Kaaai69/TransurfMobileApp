@@ -18,6 +18,7 @@ import {
   buildHabitSegments,
   buildStateSectors,
   ringGeometry,
+  summarizeHabitStatuses,
   type HabitDayStatus,
   type RingCategory,
   type StateRingValues,
@@ -101,31 +102,28 @@ function stateAccessibilityLabel(values: StateRingValues): string {
     .join(', ');
 }
 
-function habitAccessibilityValue(days: readonly HabitDayStatus[]): number {
-  return days.slice(0, ringGeometry.habitDayCount).filter((status) => status !== 'pending').length;
-}
-
 export function Ring(props: RingProps) {
   const size = props.size ?? ringGeometry.defaultSize;
   const animated = props.animated ?? true;
   const compact = size <= ringGeometry.compactBreakpoint;
   const fontScale = ringGeometry.viewBoxSize / size;
+  const habitSummary = props.mode === 'habit' ? summarizeHabitStatuses(props.days) : null;
 
   return (
     <View
       accessible
       accessibilityLabel={
-        props.mode === 'state' ? stateAccessibilityLabel(props.values) : ru.foundation.rings
+        props.mode === 'state'
+          ? stateAccessibilityLabel(props.values)
+          : ru.accessibility.habitRingLabel
       }
       accessibilityRole="image"
       accessibilityValue={
-        props.mode === 'habit'
-          ? {
-              min: 0,
-              max: ringGeometry.habitDayCount,
-              now: habitAccessibilityValue(props.days),
+        habitSummary === null
+          ? undefined
+          : {
+              text: ru.accessibility.habitRingSummary(habitSummary),
             }
-          : undefined
       }
       style={[styles.container, { height: size, width: size }]}
     >
@@ -140,7 +138,7 @@ export function Ring(props: RingProps) {
               const labelPoint = compact ? sector.compactLabelPoint : sector.externalLabelPoint;
               const compactLineOffset = (typography.caption.lineHeight * fontScale) / 2;
               const textAnchor = compact
-                ? 'middle'
+                ? sector.compactLabelAnchor
                 : index === 1
                   ? 'end'
                   : index === 4
@@ -165,7 +163,7 @@ export function Ring(props: RingProps) {
                         fill={categoryColors[sector.category]}
                         fontFamily={typography.fonts.regular}
                         fontSize={typography.label.fontSize * fontScale}
-                        textAnchor="middle"
+                        textAnchor={sector.compactLabelAnchor}
                         x={labelPoint.x}
                         y={labelPoint.y - compactLineOffset}
                       >
@@ -174,8 +172,9 @@ export function Ring(props: RingProps) {
                       <SvgText
                         fill={categoryColors[sector.category]}
                         fontFamily={typography.fonts.regular}
+                        fontFeatureSettings="'tnum'"
                         fontSize={typography.caption.fontSize * fontScale}
-                        textAnchor="middle"
+                        textAnchor={sector.compactLabelAnchor}
                         x={labelPoint.x}
                         y={labelPoint.y + compactLineOffset}
                       >
@@ -186,6 +185,7 @@ export function Ring(props: RingProps) {
                     <SvgText
                       fill={categoryColors[sector.category]}
                       fontFamily={typography.fonts.regular}
+                      fontFeatureSettings="'tnum'"
                       fontSize={typography.caption.fontSize * fontScale}
                       textAnchor={textAnchor}
                       x={labelPoint.x}

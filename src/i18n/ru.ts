@@ -27,6 +27,12 @@ export type OnboardingQuestionId =
 
 export type CategoryKey = 'sleep' | 'energy' | 'movement' | 'food' | 'water' | 'mind';
 
+export type HabitStatusCounts = Readonly<{
+  done: number;
+  forgiven: number;
+  pending: number;
+}>;
+
 type CopyBlock = Readonly<{
   title?: string;
   body: readonly string[];
@@ -42,9 +48,13 @@ type OnboardingQuestionCopy = Readonly<{
   control: 'single' | 'time' | 'number';
 }>;
 
-type RuCopyShape = Readonly<{
+export type RuCopyShape = Readonly<{
   common: Readonly<{ continue: string; later: string }>;
   categories: Record<CategoryKey, string>;
+  accessibility: Readonly<{
+    habitRingLabel: string;
+    habitRingSummary: (counts: HabitStatusCounts) => string;
+  }>;
   onboarding: Readonly<{
     totalQuestions: 16;
     progress: (current: number) => string;
@@ -74,6 +84,11 @@ export const ru = {
     food: 'Еда',
     water: 'Вода',
     mind: 'Ум',
+  },
+  accessibility: {
+    habitRingLabel: 'Кольцо привычки',
+    habitRingSummary: ({ done, forgiven, pending }: HabitStatusCounts) =>
+      `Выполнено: ${done}. Прощено: ${forgiven}. Впереди: ${pending}.`,
   },
   onboarding: {
     totalQuestions: 16,
