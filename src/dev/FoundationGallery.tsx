@@ -1,6 +1,7 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { AnswerOption, Chip, ProgressLine, ScreenShell } from '../components';
 import { ru } from '../i18n/ru';
 import { Glow, type GlowForm, type GlowLevel } from '../light';
 import { colors, spacing, typography } from '../theme';
@@ -12,52 +13,68 @@ const formRows: readonly (readonly GlowForm[])[] = [
 ];
 
 export function FoundationGallery() {
+  const [selectedPreview, setSelectedPreview] = useState(true);
+
   return (
-    <SafeAreaView style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>{ru.foundation.title}</Text>
+    <ScreenShell level="L0">
+      <Text style={styles.title}>{ru.foundation.title}</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>{ru.foundation.levels}</Text>
-          <View style={styles.levelList}>
-            {levels.map((level) => (
-              <View key={level} style={styles.levelRow}>
-                <Glow level={level} form="bloom" />
-                <Text style={styles.levelName}>{level}</Text>
-              </View>
-            ))}
+      <View style={styles.section}>
+        <Text style={styles.label}>{ru.foundation.levels}</Text>
+        <View style={styles.levelList}>
+          {levels.map((level) => (
+            <View key={level} style={styles.levelRow}>
+              <Glow level={level} form="bloom" />
+              <Text style={styles.levelName}>{level}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>{ru.foundation.forms}</Text>
+        <View style={styles.formGrid}>
+          {formRows.map((row) => (
+            <View key={row.join()} style={styles.formRow}>
+              {row.map((form) => (
+                <View key={form} style={styles.formCell}>
+                  <Glow level="L3" form={form} />
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>{ru.foundation.components}</Text>
+        <View style={styles.componentList}>
+          <AnswerOption label={ru.common.continue} onPress={() => undefined} selected={false} />
+          <AnswerOption
+            label={ru.foundation.selected}
+            onPress={() => setSelectedPreview((current) => !current)}
+            selected={selectedPreview}
+          />
+          <AnswerOption
+            disabled
+            label={ru.common.later}
+            onPress={() => undefined}
+            selected={false}
+          />
+          <ProgressLine progress={0.25} />
+          <ProgressLine progress={0.75} />
+          <View style={styles.chipList}>
+            <Chip label={ru.foundation.components} />
+            <Chip label={ru.foundation.selected} tone="accent" />
+            <Chip label={ru.common.later} tone="warm" />
           </View>
         </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>{ru.foundation.forms}</Text>
-          <View style={styles.formGrid}>
-            {formRows.map((row) => (
-              <View key={row.join()} style={styles.formRow}>
-                {row.map((form) => (
-                  <View key={form} style={styles.formCell}>
-                    <Glow level="L3" form={form} />
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-  },
-  content: {
-    paddingHorizontal: spacing.screen,
-    paddingVertical: spacing.sectionGap,
-    gap: spacing.sectionGap,
-  },
   title: {
     ...typography.screenTitle,
     color: colors.textPrimary,
@@ -101,5 +118,13 @@ const styles = StyleSheet.create({
     borderWidth: spacing.hairline,
     borderColor: colors.border,
     backgroundColor: colors.surface1,
+  },
+  componentList: {
+    gap: spacing.cardGap,
+  },
+  chipList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.rhythm,
   },
 });

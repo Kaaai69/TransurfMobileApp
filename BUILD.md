@@ -68,7 +68,7 @@ Six presets L0–L5 per `DESIGN.md` §2. Implement with `react-native-svg` `Radi
 
 ---
 
-### [ ] T05 — Base components
+### [x] T05 — Base components
 
 `src/components/`: `AnswerOption.tsx`, `ProgressLine.tsx`, `Chip.tsx`, `ScreenShell.tsx`.
 
