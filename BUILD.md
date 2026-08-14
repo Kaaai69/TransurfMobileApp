@@ -128,7 +128,7 @@ Tasks without a research source get `sourceDoi: null` — this is valid, do not 
 
 ---
 
-### [ ] T10 — State drift ⭐
+### [x] T10 — State drift ⭐
 
 `src/domain/drift.ts`. Per `docs/task-library.md` §2:
 
