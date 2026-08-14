@@ -136,8 +136,6 @@ export function Ring(props: RingProps) {
         {props.mode === 'state'
           ? buildStateSectors(props.values).map((sector, index) => {
               const labelPoint = compact ? sector.compactLabelPoint : sector.externalLabelPoint;
-              const textAnchor =
-                index === 1 ? 'end' : index === 4 ? 'start' : index < 3 ? 'start' : 'end';
 
               return (
                 <Fragment key={sector.category}>
@@ -165,11 +163,13 @@ export function Ring(props: RingProps) {
                     </SvgText>
                   ) : (
                     <SvgText
+                      alignmentBaseline="middle"
                       fill={categoryColors[sector.category]}
                       fontFamily={typography.fonts.regular}
                       fontFeatureSettings="'tnum'"
                       fontSize={typography.caption.fontSize * fontScale}
-                      textAnchor={textAnchor}
+                      textAnchor="middle"
+                      transform={`rotate(${sector.compactLabelRotation} ${labelPoint.x} ${labelPoint.y})`}
                       x={labelPoint.x}
                       y={labelPoint.y}
                     >
