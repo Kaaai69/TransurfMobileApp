@@ -144,7 +144,7 @@ Adjacent categories get weight 0.3: sleep↔energy, movement↔energy, mind↔sl
 
 ---
 
-### [ ] T11 — Grace days ⭐
+### [x] T11 — Grace days ⭐
 
 `src/domain/grace.ts`. 2 per rolling 30 days. Consumed automatically on a miss.
 
