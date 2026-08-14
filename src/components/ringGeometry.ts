@@ -5,7 +5,6 @@ export type StateRingValues = Record<RingCategory, number>;
 export type HabitDayStatus = 'done' | 'forgiven' | 'pending';
 
 export type RingPoint = Readonly<{ x: number; y: number }>;
-export type RingTextAnchor = 'start' | 'middle' | 'end';
 
 export type HabitStatusSummary = Readonly<{
   done: number;
@@ -23,7 +22,7 @@ export type StateSector = Readonly<{
   path: string;
   length: number;
   compactLabelPoint: RingPoint;
-  compactLabelAnchor: RingTextAnchor;
+  compactLabelRotation: number;
   externalLabelPoint: RingPoint;
 }>;
 
@@ -50,8 +49,12 @@ export const ringGeometry = {
   habitSegmentAngle: 6,
   habitRadius: 105,
   stateStrokeWidth: 7,
-  compactLabelClearance: 26,
-  compactLabelMaxRadius: 112,
+  compactLabelMinRadius: 88,
+  compactLabelFontSize: 11,
+  compactLabelGlyphRadialHalfExtent: 6,
+  compactLabelRadialPadding: 4,
+  compactLabelMaxTextWidth: 78,
+  compactLabelTangentialPadding: 4,
   externalLabelRadius: 118,
   habitDayCount: 60,
 } as const;
@@ -81,8 +84,16 @@ function arcLength(radius: number, startAngle: number, endAngle: number): number
   return (Math.PI * radius * (endAngle - startAngle)) / 180;
 }
 
-function inwardTextAnchor(angle: number): RingTextAnchor {
-  return Math.cos((angle * Math.PI) / 180) >= 0 ? 'end' : 'start';
+function readableTangentRotation(angle: number): number {
+  let rotation = ((((angle + 90 + 180) % 360) + 360) % 360) - 180;
+
+  if (rotation > 90) {
+    rotation -= 180;
+  } else if (rotation < -90) {
+    rotation += 180;
+  }
+
+  return rotation;
 }
 
 export function mapStateValueToRadius(value: number): number {
@@ -98,6 +109,13 @@ export function buildStateSectors(values: StateRingValues): readonly StateSector
     const startAngle = ringGeometry.stateStartAngle + index * ringGeometry.stateSlotAngle;
     const endAngle = startAngle + ringGeometry.stateSectorAngle;
     const middleAngle = (startAngle + endAngle) / 2;
+    const compactLabelRadius = Math.max(
+      ringGeometry.compactLabelMinRadius,
+      radius +
+        ringGeometry.stateStrokeWidth / 2 +
+        ringGeometry.compactLabelRadialPadding +
+        ringGeometry.compactLabelGlyphRadialHalfExtent,
+    );
 
     return {
       category,
@@ -107,11 +125,8 @@ export function buildStateSectors(values: StateRingValues): readonly StateSector
       endAngle,
       path: arcPath(radius, startAngle, endAngle),
       length: arcLength(radius, startAngle, endAngle),
-      compactLabelPoint: pointAt(
-        Math.min(radius + ringGeometry.compactLabelClearance, ringGeometry.compactLabelMaxRadius),
-        middleAngle,
-      ),
-      compactLabelAnchor: inwardTextAnchor(middleAngle),
+      compactLabelPoint: pointAt(compactLabelRadius, middleAngle),
+      compactLabelRotation: readableTangentRotation(middleAngle),
       externalLabelPoint: pointAt(ringGeometry.externalLabelRadius, middleAngle),
     };
   });

@@ -136,16 +136,8 @@ export function Ring(props: RingProps) {
         {props.mode === 'state'
           ? buildStateSectors(props.values).map((sector, index) => {
               const labelPoint = compact ? sector.compactLabelPoint : sector.externalLabelPoint;
-              const compactLineOffset = (typography.caption.lineHeight * fontScale) / 2;
-              const textAnchor = compact
-                ? sector.compactLabelAnchor
-                : index === 1
-                  ? 'end'
-                  : index === 4
-                    ? 'start'
-                    : index < 3
-                      ? 'start'
-                      : 'end';
+              const textAnchor =
+                index === 1 ? 'end' : index === 4 ? 'start' : index < 3 ? 'start' : 'end';
 
               return (
                 <Fragment key={sector.category}>
@@ -158,29 +150,19 @@ export function Ring(props: RingProps) {
                     strokeWidth={ringGeometry.stateStrokeWidth}
                   />
                   {compact ? (
-                    <>
-                      <SvgText
-                        fill={categoryColors[sector.category]}
-                        fontFamily={typography.fonts.regular}
-                        fontSize={typography.label.fontSize * fontScale}
-                        textAnchor={sector.compactLabelAnchor}
-                        x={labelPoint.x}
-                        y={labelPoint.y - compactLineOffset}
-                      >
-                        {ru.categories[sector.category]}
-                      </SvgText>
-                      <SvgText
-                        fill={categoryColors[sector.category]}
-                        fontFamily={typography.fonts.regular}
-                        fontFeatureSettings="'tnum'"
-                        fontSize={typography.caption.fontSize * fontScale}
-                        textAnchor={sector.compactLabelAnchor}
-                        x={labelPoint.x}
-                        y={labelPoint.y + compactLineOffset}
-                      >
-                        {Math.round(sector.value)}
-                      </SvgText>
-                    </>
+                    <SvgText
+                      alignmentBaseline="middle"
+                      fill={categoryColors[sector.category]}
+                      fontFamily={typography.fonts.regular}
+                      fontFeatureSettings="'tnum'"
+                      fontSize={ringGeometry.compactLabelFontSize * fontScale}
+                      textAnchor="middle"
+                      transform={`rotate(${sector.compactLabelRotation} ${labelPoint.x} ${labelPoint.y})`}
+                      x={labelPoint.x}
+                      y={labelPoint.y}
+                    >
+                      {`${ru.categories[sector.category]} ${Math.round(sector.value)}`}
+                    </SvgText>
                   ) : (
                     <SvgText
                       fill={categoryColors[sector.category]}

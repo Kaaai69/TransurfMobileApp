@@ -3,6 +3,7 @@ import {
   buildStateSectors,
   mapStateValueToRadius,
   ringCategoryOrder,
+  ringGeometry,
   summarizeHabitStatuses,
 } from './ringGeometry';
 
@@ -58,30 +59,46 @@ describe('ring geometry', () => {
     });
 
     expect(labelRadii).toEqual([
-      expect.closeTo(95.93, 4),
-      expect.closeTo(96, 4),
-      expect.closeTo(96.07, 4),
+      expect.closeTo(88, 4),
+      expect.closeTo(88, 4),
+      expect.closeTo(88, 4),
     ]);
   });
 
-  test('keeps compact labels outside their arcs and inside a bounded radius', () => {
-    const sectors = buildStateSectors({
-      sleep: 0,
-      energy: 20,
-      movement: 40,
-      food: 60,
-      water: 80,
-      mind: 100,
-    });
+  test('keeps every compact label bbox clear of its arc and the viewBox edge', () => {
+    const glyphRadialHalfExtent = ringGeometry.compactLabelGlyphRadialHalfExtent;
+    const radialPadding = ringGeometry.compactLabelRadialPadding;
 
-    for (const sector of sectors) {
-      const labelRadius = Math.hypot(
-        sector.compactLabelPoint.x - 130,
-        sector.compactLabelPoint.y - 130,
-      );
+    for (const value of [0, 49.9, 50, 50.1, 100]) {
+      const sectors = buildStateSectors({
+        sleep: value,
+        energy: value,
+        movement: value,
+        food: value,
+        water: value,
+        mind: value,
+      });
 
-      expect(labelRadius).toBeGreaterThan(sector.radius);
-      expect(labelRadius).toBeLessThanOrEqual(112);
+      for (const sector of sectors) {
+        const labelRadius = Math.hypot(
+          sector.compactLabelPoint.x - ringGeometry.center,
+          sector.compactLabelPoint.y - ringGeometry.center,
+        );
+        const innerLabelEdge = labelRadius - glyphRadialHalfExtent;
+        const outerLabelEdge = labelRadius + glyphRadialHalfExtent;
+        const availableTangentialArc =
+          (Math.PI * labelRadius * (sector.endAngle - sector.startAngle)) / 180;
+
+        expect(innerLabelEdge).toBeGreaterThanOrEqual(
+          sector.radius + ringGeometry.stateStrokeWidth / 2 + radialPadding - 0.000_001,
+        );
+        expect(outerLabelEdge).toBeLessThanOrEqual(ringGeometry.center);
+        expect(availableTangentialArc).toBeGreaterThanOrEqual(
+          ringGeometry.compactLabelMaxTextWidth + ringGeometry.compactLabelTangentialPadding * 2,
+        );
+        expect(sector.compactLabelRotation).toBeGreaterThanOrEqual(-90);
+        expect(sector.compactLabelRotation).toBeLessThanOrEqual(90);
+      }
     }
   });
 
