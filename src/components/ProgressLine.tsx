@@ -43,7 +43,7 @@ export function ProgressLine({
     <View
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="progressbar"
-      accessibilityValue={{ min: 0, max: 1, now: clampedProgress }}
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedProgress * 100) }}
       style={styles.track}
     >
       <Animated.View style={[styles.fill, { backgroundColor: color }, fillStyle]}>
