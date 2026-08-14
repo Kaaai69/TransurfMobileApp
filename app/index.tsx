@@ -1,1 +1,1 @@
-export { FoundationGallery as default } from '../src/dev/FoundationGallery';
+export { WelcomeScreen as default } from '../src/launch/WelcomeScreen';

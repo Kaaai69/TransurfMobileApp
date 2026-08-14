@@ -166,7 +166,7 @@ XP per `docs/task-library.md` §2. **XP never decreases.**
 
 # Stage C — Onboarding
 
-### [ ] T13 — Splash screen
+### [x] T13 — Splash screen
 
 `app/index.tsx`. On first launch, plays the complete `Light_arc_expanding_in_void_202608031404.mp4` via `expo-video`, composited with `mixBlendMode` screen-equivalent over black (the video's background is true `#000000`).
 
