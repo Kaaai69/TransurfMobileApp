@@ -1,0 +1,478 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "5ceffe45-f8f6-4051-9102-b669b9e044b0",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "task_log": {
+      "name": "task_log",
+      "columns": {
+        "user_task_id": {
+          "name": "user_task_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "date": {
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "xp_awarded": {
+          "name": "xp_awarded",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "task_log_user_task_id_user_task_id_fk": {
+          "name": "task_log_user_task_id_user_task_id_fk",
+          "tableFrom": "task_log",
+          "tableTo": "user_task",
+          "columnsFrom": [
+            "user_task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "task_log_user_task_id_date_pk": {
+          "columns": [
+            "user_task_id",
+            "date"
+          ],
+          "name": "task_log_user_task_id_date_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "task_log_xp_non_negative": {
+          "name": "task_log_xp_non_negative",
+          "value": "\"task_log\".\"xp_awarded\" >= 0"
+        }
+      }
+    },
+    "task_template": {
+      "name": "task_template",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "slot": {
+          "name": "slot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "tier": {
+          "name": "tier",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "anchor_text": {
+          "name": "anchor_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "action_text": {
+          "name": "action_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subtitle": {
+          "name": "subtitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_doi": {
+          "name": "source_doi",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_citation": {
+          "name": "source_citation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_note": {
+          "name": "source_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "min_budget_min": {
+          "name": "min_budget_min",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stopfactor_tags": {
+          "name": "stopfactor_tags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "task_template_tier_range": {
+          "name": "task_template_tier_range",
+          "value": "\"task_template\".\"tier\" IS NULL OR \"task_template\".\"tier\" BETWEEN 1 AND 5"
+        },
+        "task_template_slot_tier_match": {
+          "name": "task_template_slot_tier_match",
+          "value": "(\"task_template\".\"slot\" = 'core' AND \"task_template\".\"tier\" IS NOT NULL) OR (\"task_template\".\"slot\" = 'micro' AND \"task_template\".\"tier\" IS NULL)"
+        },
+        "task_template_min_budget": {
+          "name": "task_template_min_budget",
+          "value": "\"task_template\".\"min_budget_min\" IN (5, 15, 30)"
+        }
+      }
+    },
+    "user_flags": {
+      "name": "user_flags",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_soft_mode": {
+          "name": "food_soft_mode",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "budget_minutes": {
+          "name": "budget_minutes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stopfactor_type": {
+          "name": "stopfactor_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "stopfactor_value": {
+          "name": "stopfactor_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "user_flags_budget_minutes": {
+          "name": "user_flags_budget_minutes",
+          "value": "\"user_flags\".\"budget_minutes\" > 0"
+        },
+        "user_flags_stopfactor_pair": {
+          "name": "user_flags_stopfactor_pair",
+          "value": "(\"user_flags\".\"stopfactor_type\" IS NULL AND \"user_flags\".\"stopfactor_value\" IS NULL) OR (\"user_flags\".\"stopfactor_type\" IS NOT NULL AND \"user_flags\".\"stopfactor_value\" IS NOT NULL)"
+        }
+      }
+    },
+    "user_state": {
+      "name": "user_state",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sleep": {
+          "name": "sleep",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "energy": {
+          "name": "energy",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "movement": {
+          "name": "movement",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food": {
+          "name": "food",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "water": {
+          "name": "water",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mind": {
+          "name": "mind",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_sleep": {
+          "name": "baseline_sleep",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_energy": {
+          "name": "baseline_energy",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_movement": {
+          "name": "baseline_movement",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_food": {
+          "name": "baseline_food",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_water": {
+          "name": "baseline_water",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "baseline_mind": {
+          "name": "baseline_mind",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recalculated_at": {
+          "name": "recalculated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "level_xp": {
+          "name": "level_xp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grace_days_left": {
+          "name": "grace_days_left",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grace_window_start": {
+          "name": "grace_window_start",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "user_state_values_range": {
+          "name": "user_state_values_range",
+          "value": "\"user_state\".\"sleep\" BETWEEN 0 AND 100 AND \"user_state\".\"energy\" BETWEEN 0 AND 100 AND \"user_state\".\"movement\" BETWEEN 0 AND 100 AND \"user_state\".\"food\" BETWEEN 0 AND 100 AND \"user_state\".\"water\" BETWEEN 0 AND 100 AND \"user_state\".\"mind\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_sleep\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_energy\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_movement\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_food\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_water\" BETWEEN 0 AND 100 AND \"user_state\".\"baseline_mind\" BETWEEN 0 AND 100"
+        },
+        "user_state_level_xp_non_negative": {
+          "name": "user_state_level_xp_non_negative",
+          "value": "\"user_state\".\"level_xp\" >= 0"
+        },
+        "user_state_grace_days_range": {
+          "name": "user_state_grace_days_range",
+          "value": "\"user_state\".\"grace_days_left\" BETWEEN 0 AND 2"
+        }
+      }
+    },
+    "user_task": {
+      "name": "user_task",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "slot": {
+          "name": "slot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "custom_anchor": {
+          "name": "custom_anchor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "custom_action": {
+          "name": "custom_action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_task_template_id_task_template_id_fk": {
+          "name": "user_task_template_id_task_template_id_fk",
+          "tableFrom": "user_task",
+          "tableTo": "task_template",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "user_task_template_or_custom": {
+          "name": "user_task_template_or_custom",
+          "value": "(\"user_task\".\"slot\" = 'custom' AND \"user_task\".\"template_id\" IS NULL AND \"user_task\".\"custom_anchor\" IS NOT NULL AND \"user_task\".\"custom_action\" IS NOT NULL) OR (\"user_task\".\"slot\" <> 'custom' AND \"user_task\".\"template_id\" IS NOT NULL)"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

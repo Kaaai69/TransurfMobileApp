@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import appConfig from '../app.json';
+import '../src/db/client';
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({

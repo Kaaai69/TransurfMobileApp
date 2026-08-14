@@ -100,7 +100,7 @@ Draw-on animation with `react-native-reanimated`: 900ms, 80ms stagger per sector
 
 Goal: all the rules exist and are tested, before any screen depends on them.
 
-### [ ] T07 — Database schema
+### [x] T07 — Database schema
 
 `src/db/schema.ts` with drizzle + `expo-sqlite`. Tables per `docs/task-library.md` §7: `task_template`, `user_task`, `task_log`, `user_state`, `user_flags`.
 
