@@ -58,7 +58,7 @@ type CoreTaskCopy = Readonly<{
 }>;
 
 export type RuCopyShape = Readonly<{
-  common: Readonly<{ continue: string; later: string }>;
+  common: Readonly<{ back: string; continue: string; later: string }>;
   categories: Record<CategoryKey, string>;
   accessibility: Readonly<{
     habitRingLabel: string;
@@ -67,6 +67,7 @@ export type RuCopyShape = Readonly<{
   onboarding: Readonly<{
     totalQuestions: 16;
     progress: (current: number) => string;
+    stepProgress: (current: number, total: number) => string;
     screens: Record<OnboardingScreenId, CopyBlock>;
     questions: readonly OnboardingQuestionCopy[];
   }>;
@@ -86,6 +87,7 @@ export type RuCopyShape = Readonly<{
 
 export const ru = {
   common: {
+    back: 'Назад',
     continue: 'Продолжить',
     later: 'Позже',
   },
@@ -105,6 +107,7 @@ export const ru = {
   onboarding: {
     totalQuestions: 16,
     progress: (current: number) => `${current} / 16`,
+    stepProgress: (current: number, total: number) => `Шаг ${current} из ${total}`,
     screens: {
       1: {
         body: [

@@ -6,6 +6,8 @@ describe('Russian copy contract', () => {
     expect(ru.onboarding.questions).toHaveLength(16);
     expect(ru.onboarding.totalQuestions).toBe(16);
     expect(ru.onboarding.progress(7)).toBe('7 / 16');
+    expect(ru.onboarding.stepProgress(5, 22).match(/\d+/g)).toEqual(['5', '22']);
+    expect(ru.common.back.length).toBeGreaterThan(0);
   });
 
   test('keeps every question in its documented screen and control sequence', () => {

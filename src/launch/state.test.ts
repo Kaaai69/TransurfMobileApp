@@ -37,6 +37,7 @@ describe('launch state', () => {
     expect(await readLaunchState(storage)).toEqual({
       hasSeenWelcome: false,
       onboardingCompleted: false,
+      currentOnboardingStep: 1,
     });
 
     await markWelcomeSeen(storage);
@@ -44,15 +45,30 @@ describe('launch state', () => {
     expect(await readLaunchState(storage)).toEqual({
       hasSeenWelcome: true,
       onboardingCompleted: false,
+      currentOnboardingStep: 1,
     });
   });
 
-  test('routes to onboarding or the daily screen from stored state', () => {
-    expect(getLaunchDestination({ hasSeenWelcome: true, onboardingCompleted: false })).toBe(
-      '/onboarding/1',
-    );
-    expect(getLaunchDestination({ hasSeenWelcome: true, onboardingCompleted: true })).toBe(
-      '/(tabs)',
-    );
+  test('routes to the stored onboarding step or the daily screen', () => {
+    expect(
+      getLaunchDestination({
+        hasSeenWelcome: true,
+        onboardingCompleted: false,
+        currentOnboardingStep: 14,
+      }),
+    ).toBe('/onboarding/14');
+    expect(
+      getLaunchDestination({
+        hasSeenWelcome: true,
+        onboardingCompleted: true,
+        currentOnboardingStep: 14,
+      }),
+    ).toBe('/(tabs)');
+  });
+
+  test('falls back to step 1 when stored onboarding progress is invalid', async () => {
+    const storage = createMemoryStorage({ 'launch.onboardingStep': '23' });
+
+    expect((await readLaunchState(storage)).currentOnboardingStep).toBe(1);
   });
 });

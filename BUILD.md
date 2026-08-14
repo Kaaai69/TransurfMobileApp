@@ -176,7 +176,7 @@ Falls through to onboarding or daily screen depending on stored state. Repeat la
 
 ---
 
-### [ ] T14 — Onboarding shell and routing
+### [x] T14 — Onboarding shell and routing
 
 `app/onboarding/[step].tsx`. 22 steps, back navigation, progress persisted so a killed app resumes where it left off.
 
