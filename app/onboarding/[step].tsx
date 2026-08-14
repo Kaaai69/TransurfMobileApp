@@ -5,6 +5,12 @@ import { BackHandler, Platform, Pressable, StyleSheet, Text, View } from 'react-
 
 import { ScreenShell } from '../../src/components';
 import { ru } from '../../src/i18n/ru';
+import { ManifestoScreen } from '../../src/onboarding/ManifestoScreen';
+import { getManifestoScreen } from '../../src/onboarding/manifesto';
+import {
+  performManifestoAction,
+  type ManifestoActionKind,
+} from '../../src/onboarding/manifestoActions';
 import { saveOnboardingStep } from '../../src/onboarding/progress';
 import {
   getNextOnboardingRoute,
@@ -19,6 +25,7 @@ export default function OnboardingStepScreen() {
   const router = useRouter();
   const step = parseOnboardingStep(routeStep);
   const [failure, setFailure] = useState<Error | null>(null);
+  const [navigationPending, setNavigationPending] = useState(false);
 
   useEffect(() => {
     if (step === null) return;
@@ -62,6 +69,34 @@ export default function OnboardingStepScreen() {
   const light = getOnboardingShellLight(step);
   const previousRoute = getPreviousOnboardingRoute(step);
   const nextRoute = getNextOnboardingRoute(step);
+  const manifestoConfig = getManifestoScreen(step);
+
+  async function handleManifestoAction(action: ManifestoActionKind) {
+    if (manifestoConfig === null || navigationPending) return;
+
+    setNavigationPending(true);
+
+    try {
+      const result = await performManifestoAction(AsyncStorage, manifestoConfig.step, action);
+      setNavigationPending(false);
+      router.replace(result.destination);
+    } catch (error: unknown) {
+      setNavigationPending(false);
+      setFailure(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+  if (manifestoConfig !== null) {
+    return (
+      <ManifestoScreen
+        busy={navigationPending}
+        onBack={previousRoute === null ? null : () => router.replace(previousRoute)}
+        onPrimary={() => void handleManifestoAction('primary')}
+        onSkip={() => void handleManifestoAction('skip')}
+        step={manifestoConfig.step}
+      />
+    );
+  }
 
   return (
     <ScreenShell

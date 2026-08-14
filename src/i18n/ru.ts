@@ -34,7 +34,7 @@ export type HabitStatusCounts = Readonly<{
   pending: number;
 }>;
 
-type CopyBlock = Readonly<{
+export type CopyBlock = Readonly<{
   title?: string;
   body: readonly string[];
   primaryAction?: string;
@@ -68,6 +68,16 @@ export type RuCopyShape = Readonly<{
     totalQuestions: 16;
     progress: (current: number) => string;
     stepProgress: (current: number, total: number) => string;
+    manifesto: Readonly<{
+      cycleNodes: readonly [string, string, string, string];
+      audioOnLabel: string;
+      audioOffLabel: string;
+      cycleAccessibilityLabel: string;
+      graphAccessibilityLabel: string;
+      sourceLink: string;
+      streakLineLabel: string;
+      graceLineLabel: string;
+    }>;
     screens: Record<OnboardingScreenId, CopyBlock>;
     questions: readonly OnboardingQuestionCopy[];
   }>;
@@ -108,6 +118,18 @@ export const ru = {
     totalQuestions: 16,
     progress: (current: number) => `${current} / 16`,
     stepProgress: (current: number, total: number) => `Шаг ${current} из ${total}`,
+    manifesto: {
+      cycleNodes: ['Поздно лёг', 'Недоспал', 'Нет сил днём', 'Кофе после обеда'],
+      audioOnLabel: 'Выключить звук',
+      audioOffLabel: 'Включить звук',
+      cycleAccessibilityLabel:
+        'Цикл: поздно лёг, недоспал, нет сил днём, кофе после обеда, снова поздно лёг',
+      graphAccessibilityLabel:
+        'Сравнение прогресса: стрик падает до нуля, прощённый день сохраняет движение',
+      sourceLink: 'Открыть исследование',
+      streakLineLabel: 'Стрик сгорает',
+      graceLineLabel: 'Прогресс продолжается',
+    },
     screens: {
       1: {
         body: [

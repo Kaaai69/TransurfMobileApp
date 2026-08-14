@@ -186,7 +186,7 @@ Each screen declares its light level from the map in `docs/identity-and-motion.m
 
 ---
 
-### [ ] T15 — Manifesto screens (1–10)
+### [x] T15 — Manifesto screens (1–10)
 
 Text screens per `docs/onboarding-brief.md` part 3. Line-by-line text reveal, 400ms per line. Button appears at 4s — before the text finishes.
 

@@ -10,6 +10,20 @@ describe('Russian copy contract', () => {
     expect(ru.common.back.length).toBeGreaterThan(0);
   });
 
+  test('provides localized manifesto controls and diagram labels', () => {
+    expect(ru.onboarding.manifesto.cycleNodes).toEqual([
+      'Поздно лёг',
+      'Недоспал',
+      'Нет сил днём',
+      'Кофе после обеда',
+    ]);
+    expect(ru.onboarding.manifesto.audioOnLabel.length).toBeGreaterThan(0);
+    expect(ru.onboarding.manifesto.audioOffLabel.length).toBeGreaterThan(0);
+    expect(ru.onboarding.manifesto.cycleAccessibilityLabel.length).toBeGreaterThan(0);
+    expect(ru.onboarding.manifesto.graphAccessibilityLabel.length).toBeGreaterThan(0);
+    expect(ru.onboarding.manifesto.sourceLink.length).toBeGreaterThan(0);
+  });
+
   test('keeps every question in its documented screen and control sequence', () => {
     expect(
       ru.onboarding.questions.map((question) => ({
