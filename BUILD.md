@@ -120,7 +120,7 @@ Tasks without a research source get `sourceDoi: null` — this is valid, do not 
 
 ---
 
-### [ ] T09 — Scoring ⭐
+### [x] T09 — Scoring ⭐
 
 `src/domain/scoring.ts`. Implements `docs/onboarding-brief.md` part 4: 16 answers → six category values 0–100, plus weakest link selection with the fixed tie-break order.
 
