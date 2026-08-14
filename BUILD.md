@@ -154,7 +154,7 @@ Adjacent categories get weight 0.3: sleep↔energy, movement↔energy, mind↔sl
 
 ---
 
-### [ ] T12 — Tiers and XP ⭐
+### [x] T12 — Tiers and XP ⭐
 
 `src/domain/tiers.ts`. Unlock when adherence ≥ 70% over 14 days **AND** ≥ 21 days elapsed. Per category independently.
 
