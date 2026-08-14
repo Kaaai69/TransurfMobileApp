@@ -110,7 +110,7 @@ Goal: all the rules exist and are tested, before any screen depends on them.
 
 ---
 
-### [ ] T08 — Task content seed
+### [x] T08 — Task content seed
 
 `src/content/tasks.ts`. Import the 30 core tasks (six ladders × five tiers) from `docs/task-library.md` §3. Seed into `task_template` on first launch.
 

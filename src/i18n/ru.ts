@@ -26,6 +26,7 @@ export type OnboardingQuestionId =
   1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
 
 export type CategoryKey = 'sleep' | 'energy' | 'movement' | 'food' | 'water' | 'mind';
+export type CoreTaskCopyKey = `${CategoryKey}-${1 | 2 | 3 | 4 | 5}`;
 
 export type HabitStatusCounts = Readonly<{
   done: number;
@@ -46,6 +47,14 @@ type OnboardingQuestionCopy = Readonly<{
   prompt: string;
   options?: readonly string[];
   control: 'single' | 'time' | 'number';
+}>;
+
+type CoreTaskCopy = Readonly<{
+  anchorText: string;
+  actionText: string;
+  subtitle: string;
+  sourceCitation: string | null;
+  sourceNote: string | null;
 }>;
 
 export type RuCopyShape = Readonly<{
@@ -69,6 +78,9 @@ export type RuCopyShape = Readonly<{
     components: string;
     rings: string;
     selected: string;
+  }>;
+  content: Readonly<{
+    coreTasks: Record<CoreTaskCopyKey, CoreTaskCopy>;
   }>;
 }>;
 
@@ -361,6 +373,234 @@ export const ru = {
     components: 'Компоненты',
     rings: 'Кольца',
     selected: 'Выбрано',
+  },
+  content: {
+    coreTasks: {
+      'sleep-1': {
+        anchorText: 'время 22:30',
+        actionText: 'телефон едет на зарядку на кухню',
+        subtitle: 'Не «ложись раньше». Просто убери из спальни то, из-за чего не ложишься.',
+        sourceCitation: 'Van Dongen et al., Sleep, 2003',
+        sourceNote:
+          '14 дней по 6 часов дают накопленное падение внимания, которое сам человек почти не замечает. Начинаем с того, что отодвигает отбой.',
+      },
+      'sleep-2': {
+        anchorText: 'сработал будильник',
+        actionText: 'встаю, не переставляю',
+        subtitle:
+          'Фиксированный подъём держит ритм сильнее, чем фиксированный отбой. Ложиться вовремя станет проще само.',
+        sourceCitation: 'Van Dongen et al., Sleep, 2003',
+        sourceNote: 'Время подъёма берётся из анкеты, допуск ±30 мин.',
+      },
+      'sleep-3': {
+        anchorText: 'время после 15:00',
+        actionText: 'кофе меняю на воду',
+        subtitle:
+          'Кофеин за 6 часов до сна сокращает сон примерно на час. Участники исследования этого не замечали — по дневникам они спали нормально, приборы показывали другое.',
+        sourceCitation: 'Drake et al., J Clin Sleep Med, 2013',
+        sourceNote: 'Доза в исследовании — 400 мг, это около четырёх чашек.',
+      },
+      'sleep-4': {
+        anchorText: 'проснулся',
+        actionText: '10 минут у окна или на улице, до телефона',
+        subtitle: 'Утренний свет — самый сильный сигнал для внутренних часов.',
+        sourceCitation: 'Wright et al., Current Biology, 2013',
+        sourceNote:
+          'В исследовании неделя при одном естественном свете сдвинула часы на 2 часа раньше; n=8, кемпинг. Не обещаем два часа.',
+      },
+      'sleep-5': {
+        anchorText: '22:15',
+        actionText: 'начинаю укладываться, семь дней в неделю',
+        subtitle: 'Выходные ломают ритм сильнее, чем один поздний вторник.',
+        sourceCitation: 'Van Dongen et al., Sleep, 2003',
+        sourceNote: 'Допуск ±20 мин.',
+      },
+      'energy-1': {
+        anchorText: 'проснулся',
+        actionText: 'сначала к окну, потом всё остальное',
+        subtitle: 'Самый дешёвый способ сдвинуть день. Ничего не нужно, кроме окна.',
+        sourceCitation: 'Wright et al., Current Biology, 2013',
+        sourceNote: null,
+      },
+      'energy-2': {
+        anchorText: 'проснулся',
+        actionText: 'первые 15 минут без телефона',
+        subtitle: 'Не про цифровой детокс. Про то, чтобы первые решения дня были ваши, а не ленты.',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'energy-3': {
+        anchorText: 'прошёл час сидя',
+        actionText: 'встаю на 2 минуты',
+        subtitle:
+          'ВОЗ отдельно рекомендует сокращать время сидения, независимо от того, тренируетесь вы или нет.',
+        sourceCitation: 'Bull et al. / ВОЗ, BJSM, 2020',
+        sourceNote: null,
+      },
+      'energy-4': {
+        anchorText: 'после обеда тянет в сон',
+        actionText: '10 минут пешком вместо кофе',
+        subtitle: 'Кофе в это время заберёт час сна вечером. Ходьба — нет.',
+        sourceCitation: 'Drake et al., 2013 + Bull et al., 2020',
+        sourceNote: null,
+      },
+      'energy-5': {
+        anchorText: 'закончил работу',
+        actionText: 'фиксирую время и не возвращаюсь',
+        subtitle:
+          'Размытая граница дня съедает вечер, вечер съедает сон, сон съедает следующий день.',
+        sourceCitation: 'Van Dongen et al., Sleep, 2003',
+        sourceNote: null,
+      },
+      'movement-1': {
+        anchorText: 'говорю по телефону',
+        actionText: 'иду пешком',
+        subtitle: 'Не тренировка. В зачёт по рекомендациям ВОЗ идут куски любой длины.',
+        sourceCitation: 'Bull et al. / ВОЗ, BJSM, 2020',
+        sourceNote:
+          'В рекомендациях 2020 года отдельно оговорено, что эпизоды любой продолжительности засчитываются — в отличие от версии 2010 года.',
+      },
+      'movement-2': {
+        anchorText: 'встал за водой',
+        actionText: 'прохожу лишний круг',
+        subtitle: 'Цель — не шаги, а меньше непрерывного сидения.',
+        sourceCitation: 'Bull et al. / ВОЗ, BJSM, 2020',
+        sourceNote: null,
+      },
+      'movement-3': {
+        anchorText: 'вторник или четверг',
+        actionText: '20 минут непрерывной ходьбы',
+        subtitle: 'Первый повторяющийся блок. Два раза в неделю, фиксированные дни.',
+        sourceCitation: 'Bull et al. / ВОЗ, BJSM, 2020',
+        sourceNote: null,
+      },
+      'movement-4': {
+        anchorText: 'недельный счётчик',
+        actionText: 'набираю 150 минут в неделю, любыми кусками',
+        subtitle: 'Нижняя граница рекомендации ВОЗ для взрослых. Верхняя — 300.',
+        sourceCitation: 'Bull et al. / ВОЗ, BJSM, 2020',
+        sourceNote: 'Отображается прогресс-полоса недели, а не ежедневная галочка.',
+      },
+      'movement-5': {
+        anchorText: 'расписание недели',
+        actionText: '45 минут, 3–5 раз в неделю. Больше — не лучше',
+        subtitle:
+          'По крупнейшему исследованию связи движения и состояния максимум пользы для настроения — здесь. Больше 23 сессий в месяц или дольше 90 минут связано с худшими показателями.',
+        sourceCitation: 'Chekroud et al., Lancet Psychiatry, 2018',
+        sourceNote: 'Поперечное исследование, показывает связь, а не причину.',
+      },
+      'food-1': {
+        anchorText: 'сел есть',
+        actionText: 'телефон экраном вниз',
+        subtitle: 'Один приём пищи в день с вниманием на еде.',
+        sourceCitation: 'Jacka et al., BMC Medicine, 2017',
+        sourceNote: null,
+      },
+      'food-2': {
+        anchorText: 'ем',
+        actionText: 'сижу за столом, а не на ходу',
+        subtitle:
+          'Еда стоя у холодильника не считается приёмом пищи ни для головы, ни для желудка.',
+        sourceCitation: 'Jacka et al., BMC Medicine, 2017',
+        sourceNote: null,
+      },
+      'food-3': {
+        anchorText: 'прошёл час после подъёма',
+        actionText: 'завтракаю',
+        subtitle:
+          'Не про «завтрак обязателен». Про то, чтобы первый приём пищи не сползал на три часа дня.',
+        sourceCitation: 'Jacka et al., BMC Medicine, 2017',
+        sourceNote: 'Показывается, только если в анкете первый приём пищи позже 12:00.',
+      },
+      'food-4': {
+        anchorText: 'готовлю ужин',
+        actionText: 'добавляю одну овощную позицию',
+        subtitle:
+          'Добавляем, а не убираем. В исследовании работала замена состава, а не сокращение.',
+        sourceCitation: 'Jacka et al., BMC Medicine, 2017',
+        sourceNote: null,
+      },
+      'food-5': {
+        anchorText: 'утро',
+        actionText: 'решаю, что буду есть сегодня',
+        subtitle:
+          'Решение, принятое утром на трезвую голову, лучше решения в 20:00 на голодный желудок.',
+        sourceCitation: 'Gollwitzer & Sheeran, 2006',
+        sourceNote: null,
+      },
+      'water-1': {
+        anchorText: 'сел работать',
+        actionText: 'стакан воды рядом',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'water-2': {
+        anchorText: 'проснулся',
+        actionText: 'стакан воды до кофе',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'water-3': {
+        anchorText: 'закончил встречу/задачу',
+        actionText: 'допиваю стакан',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'water-4': {
+        anchorText: 'вышел из дома',
+        actionText: 'бутылка с собой',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'water-5': {
+        anchorText: 'поел',
+        actionText: 'стакан воды после',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'mind-1': {
+        anchorText: 'чувствую, что разгоняюсь',
+        actionText: '5 минут дыхания с длинным выдохом',
+        subtitle: 'Вдох через нос, короткий добор, длинный выдох через рот. Пять минут.',
+        sourceCitation: 'Balban et al., Cell Reports Medicine, 2023',
+        sourceNote:
+          'В рандомизированном исследовании пять минут такого дыхания в день улучшали настроение сильнее, чем те же пять минут медитации осознанности.',
+      },
+      'mind-2': {
+        anchorText: 'проснулся',
+        actionText: '15 минут без ленты',
+        subtitle: '',
+        sourceCitation: null,
+        sourceNote: null,
+      },
+      'mind-3': {
+        anchorText: 'закрыл ноутбук',
+        actionText: '10 минут тишины',
+        subtitle:
+          'Метаанализ рандомизированных испытаний даёт небольшое-умеренное снижение тревожности и стресса. Небольшое-умеренное — так и написано в исследовании, мы не преувеличиваем.',
+        sourceCitation: 'Goyal et al., JAMA Internal Medicine, 2014',
+        sourceNote: null,
+      },
+      'mind-4': {
+        anchorText: '21:00',
+        actionText: 'выписываю всё, что крутится в голове',
+        subtitle: 'Для тех, кто не может «выключить» голову перед сном.',
+        sourceCitation: 'Gollwitzer & Sheeran, 2006',
+        sourceNote: 'Приоритет для ответивших «почти каждый вечер» на вопрос 13.',
+      },
+      'mind-5': {
+        anchorText: 'закончил работу',
+        actionText: 'три минуты на план завтра, потом закрываю',
+        subtitle: '',
+        sourceCitation: 'Gollwitzer & Sheeran, 2006',
+        sourceNote: null,
+      },
+    },
   },
 } as const satisfies RuCopyShape;
 
