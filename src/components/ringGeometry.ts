@@ -129,8 +129,7 @@ export function buildStateSectors(
       endAngle,
       path: arcPath(radius, startAngle, endAngle),
       length: arcLength(radius, startAngle, endAngle),
-      highlighted:
-        highlightCategory === undefined ? true : highlightCategory === category,
+      highlighted: highlightCategory === undefined ? true : highlightCategory === category,
       compactLabelPoint: pointAt(compactLabelRadius, middleAngle),
       compactLabelRotation: readableTangentRotation(middleAngle),
       externalLabelPoint: pointAt(ringGeometry.externalLabelRadius, middleAngle),

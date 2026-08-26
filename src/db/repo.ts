@@ -108,9 +108,7 @@ export async function saveUserProfile(
   );
 }
 
-export async function getUserStateRow(
-  database: DatabaseConnection,
-): Promise<UserStateRow | null> {
+export async function getUserStateRow(database: DatabaseConnection): Promise<UserStateRow | null> {
   return database.getFirstAsync<UserStateRow>(
     `SELECT sleep, energy, movement, food, water, mind,
             baseline_sleep AS baselineSleep, baseline_energy AS baselineEnergy,
@@ -275,6 +273,31 @@ export async function listGraduatedSupportTasks(
   return rows ?? [];
 }
 
+/** Спуск на тир ниже по запросу пользователя — без бонусных XP. */
+export async function stepDownCoreTask(
+  database: DatabaseConnection,
+  currentTemplateId: string,
+  nextTemplateId: string,
+  startedAt: DateString,
+): Promise<void> {
+  await database.execAsync('BEGIN IMMEDIATE;');
+
+  try {
+    await database.runAsync(
+      `UPDATE user_task SET status = 'graduated' WHERE id = ? AND user_id = ?`,
+      coreUserTaskId(currentTemplateId),
+      localUserId,
+    );
+    await ensureGraduatedSupportTask(database, currentTemplateId, startedAt);
+    await ensureCoreUserTask(database, nextTemplateId, startedAt);
+
+    await database.execAsync('COMMIT;');
+  } catch (error) {
+    await database.execAsync('ROLLBACK;');
+    throw error;
+  }
+}
+
 export async function replaceActiveCoreTask(
   database: DatabaseConnection,
   currentTemplateId: string,
@@ -313,6 +336,21 @@ export async function setGraceDaysLeft(
     graceDaysLeft,
     localUserId,
   );
+}
+
+export async function resetLocalData(database: DatabaseConnection): Promise<void> {
+  await database.execAsync('BEGIN IMMEDIATE;');
+
+  try {
+    await database.execAsync(
+      'DELETE FROM task_log; DELETE FROM user_task; DELETE FROM user_state; DELETE FROM user_flags;',
+    );
+
+    await database.execAsync('COMMIT;');
+  } catch (error) {
+    await database.execAsync('ROLLBACK;');
+    throw error;
+  }
 }
 
 export async function insertTaskLog(

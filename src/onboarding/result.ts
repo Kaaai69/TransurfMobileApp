@@ -11,11 +11,7 @@ import type { KeyValueStorage } from '../launch/state';
 
 export type CalculationStageId = 'scores' | 'weakest' | 'task';
 
-export const calculationStageIds: readonly CalculationStageId[] = [
-  'scores',
-  'weakest',
-  'task',
-];
+export const calculationStageIds: readonly CalculationStageId[] = ['scores', 'weakest', 'task'];
 
 export type OnboardingResult = Readonly<{
   baseline: CategoryScores;

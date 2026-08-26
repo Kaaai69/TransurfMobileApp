@@ -31,7 +31,7 @@ class NodeDatabaseConnection implements DatabaseConnection {
 }
 
 describe('core task seed', () => {
-  test('writes 30 templates once and remains idempotent', async () => {
+  test('writes 30 core and 42 micro templates once and remains idempotent', async () => {
     const sqlite = new DatabaseSync(':memory:');
     const database = new NodeDatabaseConnection(sqlite);
 
@@ -40,8 +40,11 @@ describe('core task seed', () => {
     await seedCoreTasks(database);
 
     expect(sqlite.prepare('SELECT COUNT(*) AS count FROM task_template').get()).toEqual({
-      count: 30,
+      count: 72,
     });
+    expect(
+      sqlite.prepare("SELECT COUNT(*) AS count FROM task_template WHERE slot = 'core'").get(),
+    ).toEqual({ count: 30 });
     expect(
       sqlite
         .prepare('SELECT COUNT(*) AS count FROM task_template WHERE source_doi IS NOT NULL')

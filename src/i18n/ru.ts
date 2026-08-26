@@ -181,8 +181,7 @@ export const ru = {
     totalQuestions: 16,
     progress: (current: number) => `${current} / 16`,
     stepProgress: (current: number, total: number) => `Шаг ${current} из ${total}`,
-    weakestTitle: (category: string, value: number) =>
-      `Самое слабое звено — ${category}: ${value}`,
+    weakestTitle: (category: string, value: number) => `Самое слабое звено — ${category}: ${value}`,
     firstTaskHeading: (anchor: string, action: string) => `Если ${anchor} — ${action}`,
     manifesto: {
       cycleNodes: ['Поздно лёг', 'Недоспал', 'Нет сил днём', 'Кофе после обеда'],
@@ -450,8 +449,7 @@ export const ru = {
     unchangedSymbol: '—',
     upSymbol: '↑',
     downSymbol: '↓',
-    explanationUp: (category: string) =>
-      `${category} подрос — задача закрывалась чаще, чем нет.`,
+    explanationUp: (category: string) => `${category} подрос — задача закрывалась чаще, чем нет.`,
     explanationDown: (category: string) =>
       `${category} просела: анкета была оптимистичнее реальности. Это нормально, так у большинства.`,
     explanationSame: (category: string) =>

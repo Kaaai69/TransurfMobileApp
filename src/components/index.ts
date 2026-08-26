@@ -1,4 +1,5 @@
 export { AnswerOption, type AnswerOptionProps } from './AnswerOption';
+export { AppButton, type AppButtonProps } from './AppButton';
 export { Chip, type ChipProps } from './Chip';
 export { ProgressLine, type ProgressLineProps } from './ProgressLine';
 export { Ring, type RingProps } from './Ring';

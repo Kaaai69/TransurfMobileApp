@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Ring } from '../components';
-import { ScreenShell } from '../components';
+import { Ring, ScreenShell } from '../components';
 import { ru } from '../i18n/ru';
 import { colors, spacing, typography } from '../theme';
 import type { OnboardingResult } from './result';

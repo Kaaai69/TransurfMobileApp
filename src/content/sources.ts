@@ -106,9 +106,7 @@ function tierOneDoiByCategory(): Record<Category, string | null> {
   const byCategory = {} as Record<Category, string | null>;
 
   for (const category of categories) {
-    const tierOne = coreTaskTemplates.find(
-      (task) => task.category === category && task.tier === 1,
-    );
+    const tierOne = coreTaskTemplates.find((task) => task.category === category && task.tier === 1);
 
     byCategory[category] = tierOne?.sourceDoi ?? null;
   }
@@ -125,9 +123,7 @@ export function selectSourcesForProfile(
   const selected: SourceRecord[] = [];
   const seen = new Set<string>();
 
-  const categoriesByScore = [...categories].sort(
-    (left, right) => scores[left] - scores[right],
-  );
+  const categoriesByScore = [...categories].sort((left, right) => scores[left] - scores[right]);
 
   for (const category of categoriesByScore) {
     const doi = tierOneDoi[category];

@@ -1,4 +1,5 @@
 import { coreTaskTemplates } from '../content/tasks';
+import { microTaskTemplates } from '../content/microTasks';
 import type { DatabaseConnection } from './migrate';
 
 const insertTaskTemplateSql = `
@@ -12,7 +13,7 @@ export async function seedCoreTasks(database: DatabaseConnection) {
   await database.execAsync('BEGIN IMMEDIATE;');
 
   try {
-    for (const task of coreTaskTemplates) {
+    for (const task of [...coreTaskTemplates, ...microTaskTemplates]) {
       await database.runAsync(
         insertTaskTemplateSql,
         task.id,

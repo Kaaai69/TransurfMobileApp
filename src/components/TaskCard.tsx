@@ -47,12 +47,15 @@ export function TaskCard({
       )}
       {children}
       <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { backgroundColor: progressColor, width: `${Math.round(progress * 100)}%` }]} />
+        <View
+          style={[
+            styles.progressFill,
+            { backgroundColor: progressColor, width: `${Math.round(progress * 100)}%` },
+          ]}
+        />
       </View>
       <View style={styles.actions}>
-        {action == null ? null : (
-          <View style={styles.actionSlot}>{action}</View>
-        )}
+        {action == null ? null : <View style={styles.actionSlot}>{action}</View>}
         {source === null ? (
           <View style={styles.infoPlaceholder} />
         ) : (
