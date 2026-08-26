@@ -1,12 +1,20 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import AsyncStorage from 'expo-sqlite/kv-store';
 
 import appConfig from '../../app.json';
 import { AppButton, ScreenShell } from '../../src/components';
-import { resetLocalData } from '../../src/db/repo';
-import { databaseReady, sqlite } from '../../src/db/client';
+import { sqlite } from '../../src/db/client';
+import { getActiveCoreTask, hasTaskLog, resetLocalData } from '../../src/db/repo';
+import { today } from '../../src/domain/dates';
 import { ru } from '../../src/i18n/ru';
+import {
+  enableAndSchedule,
+  notificationsEnabled,
+  rebuildSchedule,
+  setNotificationsEnabled,
+} from '../../src/notifications/schedule';
 import { colors, spacing, typography } from '../../src/theme';
 
 const kvKeys = [
@@ -20,6 +28,7 @@ const kvKeys = [
   'daily.milestones',
   'daily.tierOfferPostponedUntil',
   'daily.perfectWeekAwarded',
+  'settings.notifications',
 ];
 
 /** Настройки — L0, света нет: служебный экран. */
@@ -27,26 +36,76 @@ export default function SettingsScreen() {
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<Error | null>(null);
+  const [notificationsOn, setNotificationsOn] = useState<boolean | null>(null);
+  const mounted = useRef(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      mounted.current = true;
+
+      void notificationsEnabled()
+        .then((enabled) => {
+          if (mounted.current) setNotificationsOn(enabled);
+        })
+        .catch(() => {});
+
+      return () => {
+        mounted.current = false;
+      };
+    }, []),
+  );
+
+  const runAction = useCallback(
+    (action: () => Promise<void>) => {
+      if (busy) return;
+
+      setBusy(true);
+
+      void action()
+        .catch((error: unknown) => {
+          if (mounted.current) {
+            setFailure(error instanceof Error ? error : new Error(String(error)));
+          }
+        })
+        .finally(() => {
+          if (mounted.current) {
+            setBusy(false);
+            setConfirming(false);
+          }
+        });
+    },
+    [busy],
+  );
 
   const handleReset = useCallback(() => {
-    if (busy) return;
+    runAction(async () => {
+      await Promise.all(kvKeys.map((key) => AsyncStorage.setItem(key, '')));
+      await resetLocalData(sqlite);
+    });
+  }, [runAction]);
 
-    setBusy(true);
+  const handleToggleNotifications = useCallback(() => {
+    runAction(async () => {
+      if (notificationsOn === true) {
+        await setNotificationsEnabled(false);
+        // План с morning:null и без вечернего отменяет всё запланированное.
+        await rebuildSchedule({ coreDoneToday: true, inactiveDays: 999 });
+        setNotificationsOn(false);
 
-    void databaseReady
-      .then(async () => {
-        await Promise.all(kvKeys.map((key) => AsyncStorage.setItem(key, '')));
-        await resetLocalData(sqlite);
-      })
-      .then(() => {
-        setBusy(false);
-        setConfirming(false);
-      })
-      .catch((error: unknown) => {
-        setBusy(false);
-        setFailure(error instanceof Error ? error : new Error(String(error)));
-      });
-  }, [busy]);
+        return;
+      }
+
+      let coreDoneToday = false;
+      const core = await getActiveCoreTask(sqlite);
+
+      if (core !== null) {
+        coreDoneToday = (await hasTaskLog(sqlite, core.id, today())) === 'done';
+      }
+
+      await enableAndSchedule(coreDoneToday);
+      setNotificationsOn(await notificationsEnabled());
+    });
+  }, [notificationsOn, runAction]);
 
   if (failure !== null) throw failure;
 
@@ -59,7 +118,14 @@ export default function SettingsScreen() {
 
         <View style={styles.section}>
           <Text style={styles.rowLabel}>{ru.settings.notifications}</Text>
-          <Text style={styles.rowValue}>{ru.settings.notificationsOff}</Text>
+          <AppButton
+            disabled={busy || notificationsOn === null}
+            label={
+              notificationsOn === true ? ru.settings.notificationsOn : ru.settings.notificationsOff
+            }
+            onPress={handleToggleNotifications}
+            variant="secondary"
+          />
         </View>
 
         <View style={styles.section}>
@@ -104,10 +170,6 @@ const styles = StyleSheet.create({
   rowLabel: {
     ...typography.body,
     color: colors.textPrimary,
-  },
-  rowValue: {
-    ...typography.caption,
-    color: colors.textMuted,
   },
   confirm: {
     ...typography.body,

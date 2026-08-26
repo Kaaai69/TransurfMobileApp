@@ -130,6 +130,12 @@ export type RuCopyShape = Readonly<{
   missedDay: Readonly<{
     remainingLine: (left: number, total: number) => string;
   }>;
+  notifications: Readonly<{
+    morningTitle: string;
+    morningBody: string;
+    eveningTitle: string;
+    eveningBody: string;
+  }>;
   settings: Readonly<{
     title: string;
     notifications: string;
@@ -475,6 +481,12 @@ export const ru = {
   missedDay: {
     remainingLine: (left: number, total: number) =>
       `Использовали прощённый день. Осталось ${left} из ${total}.`,
+  },
+  notifications: {
+    morningTitle: 'Одна задача на сегодня',
+    morningBody: 'Ядро дня ждёт. Всё остальное подождёт.',
+    eveningTitle: 'Вечер',
+    eveningBody: 'Если задача ещё не закрыта — сейчас удобный момент. Если закрыта, всё хорошо.',
   },
   settings: {
     title: 'Настройки',

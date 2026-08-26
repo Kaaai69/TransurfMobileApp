@@ -7,6 +7,7 @@ import { databaseReady, sqlite } from '../db/client';
 import { replaceActiveCoreTask, setGraceDaysLeft, stepDownCoreTask } from '../db/repo';
 import { today } from '../domain/dates';
 import type { CategoryScores } from '../domain/scoring';
+import { rebuildOnAppOpen } from '../notifications/schedule';
 import { DailyScreen } from './DailyScreen';
 import {
   processMissedDays,
@@ -91,6 +92,9 @@ export function DailyGate() {
     setPostponedUntil(postponed);
     setSnapshot(loadedSnapshot);
     setReady(true);
+
+    // Пуши никогда не должны ломать открытие приложения.
+    await rebuildOnAppOpen(loadedSnapshot.core.doneToday).catch(() => {});
   }, []);
 
   const runAction = useCallback(
