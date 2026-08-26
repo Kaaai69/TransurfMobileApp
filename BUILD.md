@@ -198,7 +198,7 @@ Screen 8 is the first warm light in the entire product.
 
 ---
 
-### [ ] T16 — Questions (11–17)
+### [x] T16 — Questions (11–17)
 
 16 questions per `docs/onboarding-brief.md` part 4. Sliders and single-select. Conditional display for Q6 (only if Q5 ≠ "нет").
 
@@ -208,7 +208,7 @@ Progress bar shows honest `current / 16`, strictly linear.
 
 ---
 
-### [ ] T17 — Calculation and result (18–20)
+### [x] T17 — Calculation and result (18–20)
 
 Screen 18 runs the **real** calculation. Checkmarks tick as stages actually complete — no timers. If it takes 200ms, show it for 200ms.
 
@@ -220,7 +220,7 @@ Mandatory small print under the ring: `Значения рассчитаны п�
 
 ---
 
-### [ ] T18 — First task and sources (21–22)
+### [x] T18 — First task and sources (21–22)
 
 Screen 21: first task card at L4, if-then format, with source attribution when present.
 
@@ -232,7 +232,7 @@ Screen 22: source cards — study name, journal, year, tappable DOI. **Text only
 
 # Stage D — Daily loop
 
-### [ ] T19 — Daily screen ⭐
+### [x] T19 — Daily screen ⭐
 
 `app/(tabs)/index.tsx`. Three slots per `docs/task-library.md` §1: core (bottom sheet, one line visible), support, today.
 
@@ -242,7 +242,7 @@ Ring at L2, task card at L4. **One L4 element on screen, no more.**
 
 ---
 
-### [ ] T20 — Missed day screen ⭐
+### [x] T20 — Missed day screen ⭐
 
 Per `docs/day1-14-and-goals.md` day 11. L2, warm.
 
@@ -252,7 +252,7 @@ Per `docs/day1-14-and-goals.md` day 11. L2, warm.
 
 ---
 
-### [ ] T21 — Day 7 recalculation
+### [x] T21 — Day 7 recalculation
 
 Six rows, before → after, arrows. Up = `accent`, down = `neutralDown`, unchanged = dash. One explanation line per change.
 
@@ -260,7 +260,7 @@ Six rows, before → after, arrows. Up = `accent`, down = `neutralDown`, unchang
 
 ---
 
-### [ ] T22 — Day 14 summary and tier offer
+### [x] T22 — Day 14 summary and tier offer
 
 Summary, then next-tier offer with a `Остаться на этой ещё на неделю` option that must work.
 
@@ -268,7 +268,7 @@ Summary, then next-tier offer with a `Остаться на этой ещё на
 
 ---
 
-### [ ] T23 — Notifications
+### [x] T23 — Notifications
 
 `expo-notifications`, schedule per `docs/day1-14-and-goals.md` push map. Max two per day, never at night.
 
