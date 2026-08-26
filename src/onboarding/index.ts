@@ -1,4 +1,5 @@
 export { ManifestoScreen, type ManifestoScreenProps } from './ManifestoScreen';
+export { QuestionnaireScreen, type QuestionnaireScreenProps } from './QuestionnaireScreen';
 export {
   getManifestoAudioPolicy,
   getManifestoLineCues,
@@ -24,10 +25,38 @@ export {
 export {
   markOnboardingComplete,
   onboardingProgressKeys,
+  prepareQuestionnaireEntry,
+  readQuestionnaireProgress,
   recordOnboardingChoice,
   saveOnboardingStep,
+  saveQuestionnaireProgress,
   type OnboardingChoiceEvent,
+  type QuestionnaireEntryProgress,
+  type QuestionnaireProgress,
 } from './progress';
+export {
+  applyQuestionAnswer,
+  formatQuestionValue,
+  getFirstUnansweredQuestion,
+  getInitialQuestion,
+  getNextQuestion,
+  getPreviousQuestion,
+  getQuestionAnswer,
+  getQuestionDefinition,
+  getQuestionnaireDestinationHref,
+  getQuestionnaireResumeDestination,
+  getQuestionOptions,
+  getQuestionsForScreen,
+  isQuestionnaireScreen,
+  parseQuestionnaireQuestionId,
+  sanitizeQuestionnaireDraft,
+  type QuestionCursor,
+  type QuestionDefinition,
+  type QuestionnaireDestination,
+  type QuestionnaireDraft,
+  type QuestionnaireHref,
+  type QuestionnaireScreen as QuestionnaireScreenNumber,
+} from './questionnaire';
 export {
   getNextOnboardingRoute,
   getOnboardingRoute,

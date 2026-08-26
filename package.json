@@ -17,6 +17,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
+    "@react-native-community/slider": "5.0.1",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
@@ -50,6 +51,7 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.0.1",
     "@types/jest": "29.5.14",
     "@types/react": "~19.1.0",
     "babel-plugin-inline-import": "^3.0.0",
@@ -66,6 +68,13 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
-    "watchman": false
+    "watchman": false,
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.worktrees/"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/.worktrees/"
+    ]
   }
 }
