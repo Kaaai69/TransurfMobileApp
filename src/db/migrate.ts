@@ -3,6 +3,7 @@ import migrations from '../../drizzle/migrations';
 export interface DatabaseConnection {
   execAsync(source: string): Promise<void>;
   getFirstAsync<T>(source: string, ...params: unknown[]): Promise<T | null>;
+  getAllAsync<T>(source: string, ...params: unknown[]): Promise<T[]>;
   runAsync(
     source: string,
     ...params: unknown[]

@@ -27,7 +27,13 @@ import {
 export type { HabitDayStatus, StateRingValues } from './ringGeometry';
 
 export type RingProps =
-  | { mode: 'state'; values: StateRingValues; size?: number; animated?: boolean }
+  | {
+      mode: 'state';
+      values: StateRingValues;
+      highlightCategory?: RingCategory;
+      size?: number;
+      animated?: boolean;
+    }
   | { mode: 'habit'; days: readonly HabitDayStatus[]; size?: number; animated?: boolean };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -96,8 +102,11 @@ function AnimatedRingPath({
   );
 }
 
-function stateAccessibilityLabel(values: StateRingValues): string {
-  return buildStateSectors(values)
+function stateAccessibilityLabel(
+  values: StateRingValues,
+  highlightCategory?: RingCategory,
+): string {
+  return buildStateSectors(values, highlightCategory)
     .map(({ category, value }) => `${ru.categories[category]} ${Math.round(value)}`)
     .join(', ');
 }
@@ -114,7 +123,7 @@ export function Ring(props: RingProps) {
       accessible
       accessibilityLabel={
         props.mode === 'state'
-          ? stateAccessibilityLabel(props.values)
+          ? stateAccessibilityLabel(props.values, props.highlightCategory)
           : ru.accessibility.habitRingLabel
       }
       accessibilityRole="image"
@@ -134,8 +143,11 @@ export function Ring(props: RingProps) {
         viewBox={`0 0 ${ringGeometry.viewBoxSize} ${ringGeometry.viewBoxSize}`}
       >
         {props.mode === 'state'
-          ? buildStateSectors(props.values).map((sector, index) => {
+          ? buildStateSectors(props.values, props.highlightCategory).map((sector, index) => {
               const labelPoint = compact ? sector.compactLabelPoint : sector.externalLabelPoint;
+              const stroke = sector.highlighted
+                ? categoryColors[sector.category]
+                : colors.dimSector;
 
               return (
                 <Fragment key={sector.category}>
@@ -144,13 +156,13 @@ export function Ring(props: RingProps) {
                     d={sector.path}
                     delay={index * motion.ring.stagger}
                     length={sector.length}
-                    stroke={categoryColors[sector.category]}
+                    stroke={stroke}
                     strokeWidth={ringGeometry.stateStrokeWidth}
                   />
                   {compact ? (
                     <SvgText
                       alignmentBaseline="middle"
-                      fill={categoryColors[sector.category]}
+                      fill={stroke}
                       fontFamily={typography.fonts.regular}
                       fontFeatureSettings="'tnum'"
                       fontSize={ringGeometry.compactLabelFontSize * fontScale}
@@ -164,7 +176,7 @@ export function Ring(props: RingProps) {
                   ) : (
                     <SvgText
                       alignmentBaseline="middle"
-                      fill={categoryColors[sector.category]}
+                      fill={stroke}
                       fontFamily={typography.fonts.regular}
                       fontFeatureSettings="'tnum'"
                       fontSize={typography.caption.fontSize * fontScale}

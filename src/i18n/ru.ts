@@ -60,6 +60,7 @@ type CoreTaskCopy = Readonly<{
 export type RuCopyShape = Readonly<{
   common: Readonly<{ back: string; continue: string; later: string }>;
   categories: Record<CategoryKey, string>;
+  tabs: Readonly<{ day: string; method: string; settings: string }>;
   accessibility: Readonly<{
     habitRingLabel: string;
     habitRingSummary: (counts: HabitStatusCounts) => string;
@@ -68,6 +69,8 @@ export type RuCopyShape = Readonly<{
     totalQuestions: 16;
     progress: (current: number) => string;
     stepProgress: (current: number, total: number) => string;
+    weakestTitle: (category: string, value: number) => string;
+    firstTaskHeading: (anchor: string, action: string) => string;
     manifesto: Readonly<{
       cycleNodes: readonly [string, string, string, string];
       audioOnLabel: string;
@@ -82,6 +85,61 @@ export type RuCopyShape = Readonly<{
     questions: readonly OnboardingQuestionCopy[];
   }>;
   milestones: Record<3 | 7 | 11 | 14, CopyBlock>;
+  daily: Readonly<{
+    coreLabel: string;
+    supportLabel: string;
+    todayLabel: string;
+    dayCounter: (day: number, total: number) => string;
+    markDone: string;
+    doneToday: string;
+    graceChip: (left: number, total: number) => string;
+    supportEmpty: string;
+    xpCaption: (xp: number) => string;
+  }>;
+  method: Readonly<{
+    title: string;
+    intro: string;
+    waterNote: string;
+  }>;
+  sources: Readonly<{
+    journalYear: (journal: string, year: number) => string;
+    openLink: string;
+  }>;
+  recalc: Readonly<{
+    unchangedSymbol: string;
+    upSymbol: string;
+    downSymbol: string;
+    explanationUp: (category: string) => string;
+    explanationDown: (category: string) => string;
+    explanationSame: (category: string) => string;
+    graceUnused: (left: number, total: number) => string;
+    graceUsed: (left: number, total: number) => string;
+  }>;
+  tierOffer: Readonly<{
+    nextStep: (actionText: string) => string;
+    supportNote: string;
+    postponeConfirmed: string;
+  }>;
+  downgrade: Readonly<{
+    title: string;
+    body: readonly string[];
+    keep: string;
+    stepDown: string;
+    stepDownConfirmed: string;
+  }>;
+  missedDay: Readonly<{
+    remainingLine: (left: number, total: number) => string;
+  }>;
+  settings: Readonly<{
+    title: string;
+    notifications: string;
+    notificationsOn: string;
+    notificationsOff: string;
+    reset: string;
+    resetConfirm: string;
+    resetCancel: string;
+    version: (version: string) => string;
+  }>;
   foundation: Readonly<{
     title: string;
     levels: string;
@@ -109,6 +167,11 @@ export const ru = {
     water: 'Вода',
     mind: 'Ум',
   },
+  tabs: {
+    day: 'День',
+    method: 'Метод',
+    settings: 'Настройки',
+  },
   accessibility: {
     habitRingLabel: 'Кольцо привычки',
     habitRingSummary: ({ done, forgiven, pending }: HabitStatusCounts) =>
@@ -118,6 +181,9 @@ export const ru = {
     totalQuestions: 16,
     progress: (current: number) => `${current} / 16`,
     stepProgress: (current: number, total: number) => `Шаг ${current} из ${total}`,
+    weakestTitle: (category: string, value: number) =>
+      `Самое слабое звено — ${category}: ${value}`,
+    firstTaskHeading: (anchor: string, action: string) => `Если ${anchor} — ${action}`,
     manifesto: {
       cycleNodes: ['Поздно лёг', 'Недоспал', 'Нет сил днём', 'Кофе после обеда'],
       audioOnLabel: 'Выключить звук',
@@ -358,6 +424,69 @@ export const ru = {
         control: 'single',
       },
     ],
+  },
+  daily: {
+    coreLabel: 'Ядро',
+    supportLabel: 'Поддержка',
+    todayLabel: 'Сегодня',
+    dayCounter: (day: number, total: number) => `день ${day} / ${total}`,
+    markDone: 'Сделал',
+    doneToday: 'Готово на сегодня',
+    graceChip: (left: number, total: number) => `Прощённые дни: ${left} из ${total}`,
+    supportEmpty: 'Здесь появятся задачи, прошедшие ядро.',
+    xpCaption: (xp: number) => `${xp} XP`,
+  },
+  method: {
+    title: 'Метод',
+    intro:
+      'Работы, на которых построены задачи в приложении. Все ссылки открываются. По воде мы не нашли исследования, за которое готовы поручиться, — задачи этой категории остаются просто разумной привычкой.',
+    waterNote: 'По воде исследований в подборке нет — и это сказано прямо.',
+  },
+  sources: {
+    journalYear: (journal: string, year: number) => `${journal}, ${year}`,
+    openLink: 'Открыть источник',
+  },
+  recalc: {
+    unchangedSymbol: '—',
+    upSymbol: '↑',
+    downSymbol: '↓',
+    explanationUp: (category: string) =>
+      `${category} подрос — задача закрывалась чаще, чем нет.`,
+    explanationDown: (category: string) =>
+      `${category} просела: анкета была оптимистичнее реальности. Это нормально, так у большинства.`,
+    explanationSame: (category: string) =>
+      `${category} не двинулось — отметок этой категории пока почти не было.`,
+    graceUnused: (left: number, total: number) =>
+      `Прощённые дни: ${left} из ${total} — не понадобились`,
+    graceUsed: (left: number, total: number) => `Прощённые дни: ${left} из ${total}`,
+  },
+  tierOffer: {
+    nextStep: (actionText: string) => `Следующая ступень: ${actionText}.`,
+    supportNote: 'Первая задача переходит в поддержку — отмечать одним касанием.',
+    postponeConfirmed: 'Хорошо. Вернёмся к этому через неделю.',
+  },
+  downgrade: {
+    title: 'Задача не подошла',
+    body: [
+      'Несколько пропусков за две недели. Это не провал — это сигнал, что задача не подошла. Возьмём проще?',
+    ],
+    keep: 'Оставить как есть',
+    stepDown: 'Спуститься на тир ниже',
+    stepDownConfirmed: 'Хорошо. Задача упрощена, цепочка цела.',
+  },
+  missedDay: {
+    remainingLine: (left: number, total: number) =>
+      `Использовали прощённый день. Осталось ${left} из ${total}.`,
+  },
+  settings: {
+    title: 'Настройки',
+    notifications: 'Напоминания',
+    notificationsOn: 'Включены',
+    notificationsOff: 'Выключены',
+    reset: 'Начать заново',
+    resetConfirm: 'Точно начать заново? Ответы, прогресс и задачи будут удалены.',
+    resetCancel: 'Отмена',
+    version: (version: string) => `Версия ${version}`,
   },
   milestones: {
     3: {

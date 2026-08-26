@@ -7,6 +7,7 @@ import { ScreenShell } from '../../src/components';
 import { ru } from '../../src/i18n/ru';
 import { ManifestoScreen } from '../../src/onboarding/ManifestoScreen';
 import { QuestionnaireScreen } from '../../src/onboarding/QuestionnaireScreen';
+import { ResultFlow, type ResultStep } from '../../src/onboarding/ResultFlow';
 import { getManifestoScreen } from '../../src/onboarding/manifesto';
 import {
   performManifestoAction,
@@ -206,6 +207,10 @@ export default function OnboardingStepScreen() {
         step={manifestoConfig.step}
       />
     );
+  }
+
+  if (step >= 18) {
+    return <ResultFlow step={step as ResultStep} />;
   }
 
   async function handleQuestionnaireProgressChange(

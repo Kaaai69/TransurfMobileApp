@@ -10,6 +10,8 @@ export {
   summarizeHabitStatuses,
   type HabitDayStatus,
   type HabitStatusSummary,
+  type RingCategory,
   type StateRingValues,
 } from './ringGeometry';
 export { ScreenShell, type ScreenShellProps } from './ScreenShell';
+export { TaskCard, type TaskCardProps } from './TaskCard';

@@ -21,6 +21,7 @@ export type StateSector = Readonly<{
   endAngle: number;
   path: string;
   length: number;
+  highlighted: boolean;
   compactLabelPoint: RingPoint;
   compactLabelRotation: number;
   externalLabelPoint: RingPoint;
@@ -102,7 +103,10 @@ export function mapStateValueToRadius(value: number): number {
   return 35 + clampedValue * 0.7;
 }
 
-export function buildStateSectors(values: StateRingValues): readonly StateSector[] {
+export function buildStateSectors(
+  values: StateRingValues,
+  highlightCategory?: RingCategory,
+): readonly StateSector[] {
   return ringCategoryOrder.map((category, index) => {
     const value = Math.max(0, Math.min(100, values[category]));
     const radius = mapStateValueToRadius(value);
@@ -125,6 +129,8 @@ export function buildStateSectors(values: StateRingValues): readonly StateSector
       endAngle,
       path: arcPath(radius, startAngle, endAngle),
       length: arcLength(radius, startAngle, endAngle),
+      highlighted:
+        highlightCategory === undefined ? true : highlightCategory === category,
       compactLabelPoint: pointAt(compactLabelRadius, middleAngle),
       compactLabelRotation: readableTangentRotation(middleAngle),
       externalLabelPoint: pointAt(ringGeometry.externalLabelRadius, middleAngle),

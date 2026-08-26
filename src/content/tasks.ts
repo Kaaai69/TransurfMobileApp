@@ -179,3 +179,7 @@ export const coreTaskTemplates: readonly CoreTaskTemplate[] = metadata.map((task
   slot: 'core',
   stopfactorTags: [],
 }));
+
+export function findCoreTaskTemplateById(id: string): CoreTaskTemplate | null {
+  return coreTaskTemplates.find((task) => task.id === id) ?? null;
+}

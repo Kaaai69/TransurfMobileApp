@@ -15,6 +15,10 @@ class NodeDatabaseConnection implements DatabaseConnection {
     );
   }
 
+  async getAllAsync<T>(source: string, ...params: readonly unknown[]) {
+    return this.database.prepare(source).all(...(params as SQLInputValue[])) as T[];
+  }
+
   async runAsync(source: string, ...params: readonly unknown[]) {
     const result = this.database.prepare(source).run(...(params as SQLInputValue[]));
 

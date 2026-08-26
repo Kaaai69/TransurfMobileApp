@@ -19,6 +19,7 @@ describe('theme contract', () => {
       warm: '#FFB86B',
       warmDim: '#3A2617',
       neutralDown: '#7C8296',
+      dimSector: '#4A5058',
       catSleep: '#8B7BFF',
       catEnergy: '#FFB020',
       catMovement: '#3DDC97',
